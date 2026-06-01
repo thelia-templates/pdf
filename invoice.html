@@ -245,6 +245,11 @@
                         {$TITLE} <br>
                         {intl l="Product ref : "}{$REF}<br>
                         {intl l="Combination ref : "}{$PRODUCT_SALE_ELEMENTS_REF}
+                    {ifloop rel="combinations"}
+                    {loop type="order_product_attribute_combination" name="combinations" order_product=$ID}
+                        <span style="font-size: 9px;">{$ATTRIBUTE_TITLE} - {$ATTRIBUTE_AVAILABILITY_TITLE}</span><br>
+                    {/loop}
+                    {/ifloop}
                     </p>
 
                     {hook name="invoice.product-list" order_product=$ID order=$order_id}
