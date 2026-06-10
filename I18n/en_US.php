@@ -40,4 +40,7 @@ return [
     'Unit. price' => 'Unit. price',
     'page' => 'page',
     'product' => 'product',
+    'Tax rate' => 'Tax rate',
+    'Postage tax amount' => 'Postage tax amount',
+    'Postage with tax' => 'Postage incl. tax',
 ];

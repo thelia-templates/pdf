@@ -38,4 +38,7 @@ return [
     'invoice.imprint' => 'invoice.imprint',
     'page' => 'صفحه',
     'product' => 'محصول',
+    'Tax rate' => 'نرخ مالیات',
+    'Postage tax amount' => 'مالیات هزینه پست',
+    'Postage with tax' => 'هزینه پست با مالیات',
 ];

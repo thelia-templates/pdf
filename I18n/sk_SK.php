@@ -31,4 +31,7 @@ return [
     'invoice.imprint' => 'invoice.imprint',
     'page' => 'stránka',
     'product' => 'produkt',
+    'Tax rate' => 'Sadzba dane',
+    'Postage tax amount' => 'Daň z poštovného',
+    'Postage with tax' => 'Poštovné vrátane dane',
 ];

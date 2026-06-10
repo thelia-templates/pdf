@@ -22,4 +22,7 @@ return [
     'Total without tax' => 'Total (sem IVA)',
     'page' => 'página',
     'product' => 'produto',
+    'Tax rate' => 'Taxa de imposto',
+    'Postage tax amount' => 'Imposto sobre portes',
+    'Postage with tax' => 'Portes com imposto',
 ];

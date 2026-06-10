@@ -13,4 +13,7 @@
 return [
     'page' => 'pagina',
     'product' => 'product',
+    'Tax rate' => 'Belastingtarief',
+    'Postage tax amount' => 'Verzendkosten belasting',
+    'Postage with tax' => 'Verzendkosten incl. belasting',
 ];

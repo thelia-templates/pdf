@@ -28,4 +28,7 @@ return [
     'invoice.imprint' => 'invoice.imprint',
     'page' => 'página',
     'product' => 'produto',
+    'Tax rate' => 'Alíquota de imposto',
+    'Postage tax amount' => 'Imposto sobre frete',
+    'Postage with tax' => 'Frete com impostos',
 ];
