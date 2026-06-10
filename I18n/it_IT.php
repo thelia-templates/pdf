@@ -24,4 +24,7 @@ return [
     'Total' => 'Totale',
     'Unit taxed price' => 'Prezzo unitario tassato',
     'Unit. price' => 'Prezzo unitario',
+    'Tax rate' => 'Aliquota fiscale',
+    'Postage tax amount' => 'IVA spese di spedizione',
+    'Postage with tax' => 'Spese di spedizione IVA incl.',
 ];

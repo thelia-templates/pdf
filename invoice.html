@@ -245,6 +245,11 @@
                         {$TITLE} <br>
                         {intl l="Product ref : "}{$REF}<br>
                         {intl l="Combination ref : "}{$PRODUCT_SALE_ELEMENTS_REF}
+                    {ifloop rel="combinations"}
+                    {loop type="order_product_attribute_combination" name="combinations" order_product=$ID}
+                        <span style="font-size: 9px;">{$ATTRIBUTE_TITLE} - {$ATTRIBUTE_AVAILABILITY_TITLE}</span><br>
+                    {/loop}
+                    {/ifloop}
                     </p>
 
                     {hook name="invoice.product-list" order_product=$ID order=$order_id}
@@ -323,6 +328,30 @@
                         </td>
                         <td class="table-3-1 align-right">
                             <p>{format_money number=$untaxedPostage currency_id=$currency}</p>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="table-3-1">
+                            <p>{intl l="Tax rate"}</p>
+                        </td>
+                        <td class="table-3-1 align-right">
+                            <p>{$tva * 100} %</p>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="table-3-1">
+                            <p>{intl l="Postage tax amount"}</p>
+                        </td>
+                        <td class="table-3-1 align-right">
+                            <p>{format_money number=$postageTax currency_id=$currency}</p>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="table-3-1">
+                            <p>{intl l="Postage with tax"}</p>
+                        </td>
+                        <td class="table-3-1 align-right">
+                            <p>{format_money number={$untaxedPostage + $postageTax} currency_id=$currency}</p>
                         </td>
                     </tr>
 

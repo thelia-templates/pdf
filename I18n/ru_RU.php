@@ -36,4 +36,7 @@ return [
     'Unit. price' => 'Цена ед.',
     'page' => 'страница',
     'product' => 'товар',
+    'Tax rate' => 'Ставка налога',
+    'Postage tax amount' => 'Налог на доставку',
+    'Postage with tax' => 'Доставка с налогом',
 ];

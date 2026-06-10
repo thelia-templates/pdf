@@ -25,4 +25,7 @@ return [
     'Total' => 'Összesen',
     'Unit taxed price' => 'Egységár (Bruttó)',
     'Unit. price' => 'Egységár',
+    'Tax rate' => 'Adókulcs',
+    'Postage tax amount' => 'Szállítási költség adó',
+    'Postage with tax' => 'Szállítási költség adóval',
 ];

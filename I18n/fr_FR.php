@@ -44,4 +44,7 @@ return [
     'Unit. price' => 'Prix unitaire',
     'page' => 'page',
     'product' => 'Produit',
+    'Tax rate' => 'Taux de TVA',
+    'Postage tax amount' => 'TVA frais de port',
+    'Postage with tax' => 'Frais de port TTC',
 ];

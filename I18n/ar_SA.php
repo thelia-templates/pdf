@@ -25,4 +25,7 @@ return [
     'Total without tax' => 'المجموع بدون ضريبة',
     'page' => 'الصفحة',
     'product' => 'المنتج',
+    'Tax rate' => 'نسبة الضريبة',
+    'Postage tax amount' => 'ضريبة الشحن',
+    'Postage with tax' => 'الشحن شامل الضريبة',
 ];

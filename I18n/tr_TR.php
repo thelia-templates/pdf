@@ -38,4 +38,7 @@ return [
     'invoice.imprint' => 'Fatura Şekli',
     'page' => 'sayfa',
     'product' => 'Ürün',
+    'Tax rate' => 'Vergi oranı',
+    'Postage tax amount' => 'Kargo vergisi',
+    'Postage with tax' => 'Kargo (KDV dahil)',
 ];

@@ -22,4 +22,7 @@ return [
     'Total without tax' => 'Σύνολο χωρίς ΦΠΑ',
     'page' => 'σελίδα',
     'product' => 'προϊόν',
+    'Tax rate' => 'Συντελεστής φόρου',
+    'Postage tax amount' => 'Φόρος μεταφορικών',
+    'Postage with tax' => 'Μεταφορικά με φόρο',
 ];

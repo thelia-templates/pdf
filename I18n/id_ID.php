@@ -24,4 +24,7 @@ return [
     'invoice.imprint' => 'jejak Faktur',
     'page' => 'halaman',
     'product' => 'produk',
+    'Tax rate' => 'Tarif pajak',
+    'Postage tax amount' => 'Pajak ongkos kirim',
+    'Postage with tax' => 'Ongkos kirim termasuk pajak',
 ];
