@@ -1,0 +1,181 @@
+<style>
+{% verbatim %}
+    @page { margin: 10mm 10mm 22mm 10mm; }
+
+    h1, h2, h3, h4 { color:#f6993c; margin: .5em 0; }
+    h1 { font-size: 48px; }
+    h2 { font-size: 16px; }
+    h3 { font-size: 14px; }
+    h4 { color:#58585a; font-size: 12px; }
+
+    p, td { color:#58585a; font-size: 9px; }
+    p { margin: .5em 0; }
+    span { font-size: 9px; }
+
+    table { border-collapse: collapse; width: 100%; }
+    tr { width: 100%; }
+    td { vertical-align: top; }
+
+    .table-info { margin-bottom: 15px; }
+    .table-info h3 { font-size: 12px; color: #58585a; margin-top: 0; margin-bottom: 10px; }
+    .table-info h3 span { font-size: inherit; color: #f6993c; }
+
+    .table-1 td { background: #f1f3f4; border:solid 1px #bcbdc0; }
+    .table-2 td { border:solid 1px #bcbdc0; }
+
+    .table-3-1, .table-3-2 { border: solid 1px #bcbdc0; }
+    .table-3-1 p { font-size: 10px; }
+    .table-3-2 p { font-size: 9px; color: #747475; }
+
+    .table-3-module h3 { margin-top: 1.5em; }
+    .table-3-module span { font-size: 11px; }
+
+    .align-left { text-align: left; }
+    .align-center { text-align: center; }
+    .align-right{ text-align: right; }
+
+    .clear { padding: 0.5%; border-bottom:solid 1px #dddddd; }
+    .clear-none { padding: 0.5%; }
+
+    .pdf-footer { position: fixed; bottom: 0; left: 0; right: 0; }
+    /* dompdf 3.1 resolves counter(page) but not counter(pages) (always 0), so only the
+       current page number is shown; the total is intentionally omitted. */
+    .pdf-footer .page-counter:after { content: counter(page); }
+{% endverbatim %}
+{{ hook('delivery.css') }}
+</style>
+
+<div class="pdf-footer">
+    {{ hook('delivery.footer-top', {order: order_id}) }}
+    <table>
+    <col style="width:100%">
+        <tbody>
+        <tr>
+            <td>
+            <div style="width:100%; text-align:center; position:relative;">
+                    {% set imprint = hook('invoice.imprint', {order: order_id}) %}
+                    {% if imprint is not empty %}{{ imprint }}{% else %}
+                        {{ config('store_name') }}
+                        {% set addresses = config('store_address1') ~ ' ' ~ config('store_address2') ~ ' ' ~ config('store_address3') %}
+                        {% set city = config('store_zipcode') ~ ' ' ~ config('store_city') %}
+                        {% if addresses|trim %}- {{ addresses }}{% endif %}
+                        {% if city|trim %}- {{ city }}{% endif %}
+                        {% if config('store_country') %}
+                            {% for country in loop('address.country.title', 'country', {visible: '*', id: config('store_country')}) %} - {{ country.TITLE }}{% endfor %}
+                        {% endif %}
+                        {% if config('store_business_id') %} - {{ config('store_business_id') }}{% endif %}
+                        <br>
+                        {% if config('store_phone') %}{{ 'Phone: '|trans({}, 'pdf', locale) }}{{ config('store_phone') }}{% endif %}
+                        {% if config('store_email') %}{{ 'Email: '|trans({}, 'pdf', locale) }}{{ config('store_email') }}{% endif %}
+                    {% endif %}
+                <div style="position:absolute;top:1mm;right:1mm;line-height:1">{{ 'page'|trans({}, 'pdf', locale) }} <span class="page-counter"></span></div>
+            </div>
+            </td>
+        </tr>
+        </tbody>
+    </table>
+    {{ hook('delivery.footer-bottom', {order: order_id}) }}
+</div>
+
+<div class="pdf-header">{{ hook('delivery.header', {order: order_id}) }}</div>
+
+{% for order in loop('order.invoice', 'order', {id: order_id, customer: '*'}) %}
+
+    <table class="table-info">
+        <col style="width: 100%; padding: 0mm;" />
+        <tr>
+            <td><h1>{{ 'DELIVERY'|trans({}, 'pdf', locale) }}</h1></td>
+        </tr>
+        <tr>
+            <td><h3>{{ 'Invoice date'|trans({}, 'pdf', locale) }} : <span>{{ format_date(order.INVOICE_DATE, 'date') }}</span></h3></td>
+        </tr>
+        <tr>
+            <td><h3>{{ 'Invoice REF'|trans({}, 'pdf', locale) }} : <span>{{ order.REF }}</span></h3></td>
+        </tr>
+        <tr>
+            <td><h3>{{ 'Customer Number'|trans({}, 'pdf', locale) }} : <span>{% for customer in loop('customer.invoice', 'customer', {id: order.CUSTOMER, current: 0}) %}{{ customer.REF }}{% endfor %}</span></h3></td>
+        </tr>
+        {% for fragment in hook_block('delivery.information', {order: order_id, fields: 'title,value'}) %}
+        <tr>
+            <td><h3>{{ fragment.title }} : <span>{{ fragment.value }}</span></h3></td>
+        </tr>
+        {% endfor %}
+    </table>
+
+    {{ hook('delivery.after-information', {order: order_id}) }}
+
+    <table class="table-address">
+        <col style="width: 50%; padding: 3mm;" />
+        <col style="padding: 3mm;" />
+        <tr>
+            <td style="border-left: solid 1mm #f6993c;" >
+                <h3>{{ 'Delivery address'|trans({}, 'pdf', locale) }}</h3>
+                {% set deliveryAddress = hook('delivery.delivery-address', {module: order.DELIVERY_MODULE, order: order_id}) %}
+                {% if deliveryAddress is not empty %}{{ deliveryAddress }}{% else %}{{ format_address(order.DELIVERY_ADDRESS, locale)|raw }}{% endif %}
+            </td>
+            <td style="border-left: solid 1mm #f6993c;">
+                <h3>{{ 'Invoice address'|trans({}, 'pdf', locale) }}</h3>
+                {{ format_address(order.INVOICE_ADDRESS, locale)|raw }}
+            </td>
+        </tr>
+    </table>
+
+    {{ hook('delivery.after-addresses', {order: order_id}) }}
+
+    <table style="padding-top: 5mm;">
+        <col style="width: 23%; padding: 3mm;" />
+        <col style="width: 65%; padding: 3mm;" />
+        <col style="width: 12%; padding: 3mm;" />
+        <tr>
+            <td style="border:solid 1px #dddddd;background:#f1f3f4;" >
+                <h3 style="color:#58585a;">{{ 'Ref'|trans({}, 'pdf', locale) }}</h3>
+            </td>
+            <td style="border:solid 1px #dddddd;background:#f1f3f4;">
+                <h3 style="color:#58585a;">{{ 'product'|trans({}, 'pdf', locale) }}</h3>
+            </td>
+            <td style="border:solid 1px #dddddd;background-color:#f6993c;">
+                <h3 style="color:white; text-align:center;">{{ 'Quantity'|trans({}, 'pdf', locale) }}</h3>
+            </td>
+        </tr>
+        {% for product in loop('order-products', 'order_product', {order: order.ID}) %}
+        <tr>
+            <td style="border:solid 1px #dddddd;">
+                <p>{{ product.REF }}</p>
+                {% if product.REF != product.PRODUCT_SALE_ELEMENTS_REF %}<p>{{ product.PRODUCT_SALE_ELEMENTS_REF }}</p>{% endif %}
+            </td>
+            <td style="border:solid 1px #dddddd;">
+                <p>{{ product.TITLE }}</p>
+                {% for combination in loop('combinations', 'order_product_attribute_combination', {order_product: product.ID}) %}
+                    {{ combination.ATTRIBUTE_TITLE }} - {{ combination.ATTRIBUTE_AVAILABILITY_TITLE }}<br>
+                {% endfor %}
+                {{ hook('delivery.product-list', {order_product: product.ID, order: order_id}) }}
+            </td>
+            <td style="border:solid 1px #dddddd; text-align:center;">
+                <p>{{ product.QUANTITY }}</p>
+            </td>
+        </tr>
+
+        {{ hook('delivery.order-product', {order: order_id, order_product: product.ID}) }}
+        {% endfor %}
+    </table>
+
+    <table style="padding-top: 5mm;">
+        <col style="width: 40%; padding: 3mm;" />
+        <tr>
+            <td class="table-3-module" style="border-left:solid 3px #f6993c; padding-top: 2mm">
+                <h3>{{ 'Delivery module'|trans({}, 'pdf', locale) }}</h3>
+                <p>
+                    <span>{% for module in loop('delivery-module', 'module', {id: order.DELIVERY_MODULE}) %}{{ module.TITLE }}{% endfor %}</span>
+                </p>
+
+                {{ hook('delivery.after-delivery-module', {order: order_id, module_id: order.DELIVERY_MODULE}) }}
+            </td>
+        </tr>
+        <tr>
+            <td class="clear-none"></td>
+        </tr>
+    </table>
+
+{{ hook('delivery.after-summary', {order: order_id}) }}
+
+{% endfor %}
