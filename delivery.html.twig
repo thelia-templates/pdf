@@ -90,7 +90,7 @@
             <td><h3>{{ 'Invoice date'|trans({}, 'pdf', locale) }} : <span>{{ format_date(order.INVOICE_DATE, 'date') }}</span></h3></td>
         </tr>
         <tr>
-            <td><h3>{{ 'Invoice REF'|trans({}, 'pdf', locale) }} : <span>{{ order.REF }}</span></h3></td>
+            <td><h3>{{ 'Order REF'|trans({}, 'pdf', locale) }} : <span>{{ order.REF }}</span></h3></td>
         </tr>
         <tr>
             <td><h3>{{ 'Customer Number'|trans({}, 'pdf', locale) }} : <span>{% for customer in loop('customer.invoice', 'customer', {id: order.CUSTOMER, current: 0}) %}{{ customer.REF }}{% endfor %}</span></h3></td>

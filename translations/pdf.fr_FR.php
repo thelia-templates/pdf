@@ -42,6 +42,10 @@ return [
     'Sub-Total tax amount' => 'Sous-Total Taxes',
     'Unit taxed price' => 'Prix unitaire TTC',
     'Unit. price' => 'Prix unitaire',
+    'Order REF' => 'Numéro de commande',
+    'Tax rate' => 'Taux de taxe',
+    'Postage tax amount' => 'Montant de la taxe de port',
+    'Postage with tax' => 'Frais de port TTC',
     'page' => 'page',
     'product' => 'Produit',
 ];
