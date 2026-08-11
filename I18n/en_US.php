@@ -13,6 +13,7 @@
 return [
     'Combination ref : ' => 'Combination ref : ',
     'Customer Number' => 'Customer Number',
+    'Customer discount rate' => 'Customer discount rate',
     'DELIVERY' => 'DELIVERY',
     'Delivery address' => 'Delivery address',
     'Delivery module' => 'Delivery module',

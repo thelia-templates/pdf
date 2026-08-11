@@ -231,6 +231,14 @@
                     <td class="table-3-1 align-right"><p>{{ format_money(untaxedPostage + postageTax, currency) }}</p></td>
                 </tr>
 
+                {# Customer discount rate, already included in the product prices above #}
+                {% if order.CUSTOMER_DISCOUNT_RATE|default(0) > 0 %}
+                <tr>
+                    <td class="table-3-1"><p>{{ 'Customer discount rate'|trans({}, 'pdf', locale) }}</p></td>
+                    <td class="table-3-1 align-right"><p>{{ order.CUSTOMER_DISCOUNT_RATE }} %</p></td>
+                </tr>
+                {% endif %}
+
                 {# Cart + postage totals #}
                 {% if hideTax|default(false) %}
                 <tr>
