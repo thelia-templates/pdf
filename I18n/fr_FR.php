@@ -13,6 +13,7 @@
 return [
     'Combination ref : ' => 'Réf. déclinaison',
     'Customer Number' => 'Numéro de client',
+    'Customer discount rate' => 'Taux de remise client',
     'DELIVERY' => 'LIVRAISON',
     'Delivery address' => 'Adresse de livraison',
     'Delivery module' => 'Module de livraison',
