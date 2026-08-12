@@ -1,13 +1,13 @@
 <style>
 {% verbatim %}
-    @page { margin: 10mm 10mm 22mm 10mm; }
+    @page { margin: 10mm 10mm 13mm 10mm; }
 
     h1, h2, h3, h4 {
         color:#f6993c;
         margin: .5em 0;
     }
 
-    h1 { font-size: 48px; }
+    h1 { font-size: 30px; }
     h2 { font-size: 16px; }
     h3 { font-size: 14px; }
     h4 { color:#58585a; font-size: 12px; }
@@ -21,11 +21,19 @@
     td { vertical-align: top; }
 
     .table-info { margin-bottom : 15px; }
-    .table-info h3 { font-size: 12px; color: #58585a; margin-top: 0; margin-bottom: 10px; }
+    .table-info h3 { font-size: 12px; color: #58585a; margin-top: 0; margin-bottom: 6px; }
     .table-info h3 span { font-size: inherit; color: #f6993c; }
 
     .table-1 td { background: #f1f3f4; border:solid 1px #bcbdc0; }
+    .table-1 h4 { font-size: 10px; margin: .2em 0; }
     .table-2 td { border:solid 1px #bcbdc0; }
+    .table-2 p { margin: 0; }
+
+    .store-imprint p { font-size: 8px; color: #747475; margin: 0; line-height: 1.35; }
+    .store-imprint .store-imprint-name { font-size: 9px; color: #58585a; }
+
+    .product-title { font-size: 9px; }
+    .product-meta { font-size: 8px; color: #747475; }
 
     .table-3-1, .table-3-2 { border: solid 1px #bcbdc0; }
     .table-3-1 span { font-size: 8px; color: #747475; }
@@ -42,7 +50,9 @@
     .clear { padding: 0.5%; border-bottom:solid 1px #dddddd; }
     .clear-none { padding: 0.5%; }
 
-    .pdf-footer { position: fixed; bottom: 0; left: 0; right: 0; }
+    /* dompdf pins a fixed element to the page content box, so a negative offset is needed
+       to move the footer into the bottom margin and keep it clear of the page content. */
+    .pdf-footer { position: fixed; bottom: -6mm; left: 0; right: 0; }
     /* dompdf 3.1 resolves counter(page) but not counter(pages) (always 0), so only the
        current page number is shown; the total is intentionally omitted. */
     .pdf-footer .page-counter:after { content: counter(page); }
@@ -53,29 +63,19 @@
 <div class="pdf-footer">
     {{ hook('invoice.footer-top', {order: order_id}) }}
     <table>
-    <col style="width:100%">
+    <col style="width:15%">
+    <col style="width:70%">
+    <col style="width:15%">
         <tbody>
         <tr>
-            <td>
-            <div style="width:100%; text-align:center; position:relative;">
-                    {% set imprint = hook('invoice.imprint', {order: order_id}) %}
-                    {% if imprint is not empty %}{{ imprint }}{% else %}
-                        {{ config('store_name') }}
-                        {% set addresses = config('store_address1') ~ ' ' ~ config('store_address2') ~ ' ' ~ config('store_address3') %}
-                        {% set city = config('store_zipcode') ~ ' ' ~ config('store_city') %}
-                        {% if addresses|trim %}- {{ addresses }}{% endif %}
-                        {% if city|trim %}- {{ city }}{% endif %}
-                        {% if config('store_country') %}
-                            {% for country in loop('address.country.title', 'country', {visible: '*', id: config('store_country')}) %} - {{ country.TITLE }}{% endfor %}
-                        {% endif %}
-                        {% if config('store_business_id') %} - {{ config('store_business_id') }}{% endif %}
-                        <br>
-                        {% if config('store_phone') %}{{ 'Phone: '|trans({}, 'pdf', locale) }}{{ config('store_phone') }}{% endif %}
-                        {% if config('store_email') %}{{ 'Email: '|trans({}, 'pdf', locale) }}{{ config('store_email') }}{% endif %}
-                    {% endif %}
-                <div style="position:absolute;top:1mm;right:1mm;line-height:1">{{ 'page'|trans({}, 'pdf', locale) }} <span class="page-counter"></span></div>
-            </div>
+            <td></td>
+            <td class="align-center">
+                {% set city = config('store_zipcode') ~ ' ' ~ config('store_city') %}
+                {{ config('store_name') }}
+                {% if city|trim %} - {{ city }}{% endif %}
+                {% if config('store_business_id') %} - {{ config('store_business_id') }}{% endif %}
             </td>
+            <td class="align-right">{{ 'page'|trans({}, 'pdf', locale) }} <span class="page-counter"></span></td>
         </tr>
         </tbody>
     </table>
@@ -93,21 +93,45 @@
     </tr>
 </table>
 <table class="table-info">
-    <col style="width: 100%; padding: 0mm;" />
+    <col style="width: 60%; padding: 0mm;" />
+    <col style="width: 40%; padding: 0mm;" />
     <tr>
-        <td><h3>{{ 'Invoice date'|trans({}, 'pdf', locale) }} : <span>{{ format_date(order.INVOICE_DATE, 'date') }}</span></h3></td>
+        <td>
+            <table>
+                <tr>
+                    <td><h3>{{ 'Invoice date'|trans({}, 'pdf', locale) }} : <span>{{ format_date(order.INVOICE_DATE, 'date') }}</span></h3></td>
+                </tr>
+                <tr>
+                    <td><h3>{{ 'Invoice REF'|trans({}, 'pdf', locale) }} : <span>FA{{ order.REF|slice(3) }}</span></h3></td>
+                </tr>
+                <tr>
+                    <td><h3>{{ 'Customer Number'|trans({}, 'pdf', locale) }} : <span>{% for customer in loop('customer.invoice', 'customer', {id: order.CUSTOMER, current: 0}) %}{{ customer.REF }}{% endfor %}</span></h3></td>
+                </tr>
+                {% for fragment in hook_block('invoice.information', {order: order_id, fields: 'title,value'}) %}
+                <tr>
+                    <td><h3>{{ fragment.title }} : <span>{{ fragment.value }}</span></h3></td>
+                </tr>
+                {% endfor %}
+            </table>
+        </td>
+        <td class="store-imprint align-right">
+            {% set imprint = hook('invoice.imprint', {order: order_id}) %}
+            {% if imprint is not empty %}{{ imprint }}{% else %}
+                <p class="store-imprint-name"><strong>{{ config('store_name') }}</strong></p>
+                {% for line in [config('store_address1'), config('store_address2'), config('store_address3')] %}
+                    {% if line|trim %}<p>{{ line }}</p>{% endif %}
+                {% endfor %}
+                {% set city = config('store_zipcode') ~ ' ' ~ config('store_city') %}
+                {% if city|trim %}<p>{{ city }}</p>{% endif %}
+                {% if config('store_country') %}
+                    {% for country in loop('address.country.title', 'country', {visible: '*', id: config('store_country')}) %}<p>{{ country.TITLE }}</p>{% endfor %}
+                {% endif %}
+                {% if config('store_business_id') %}<p>{{ config('store_business_id') }}</p>{% endif %}
+                {% if config('store_phone') %}<p>{{ 'Phone: '|trans({}, 'pdf', locale) }}{{ config('store_phone') }}</p>{% endif %}
+                {% if config('store_email') %}<p>{{ 'Email: '|trans({}, 'pdf', locale) }}{{ config('store_email') }}</p>{% endif %}
+            {% endif %}
+        </td>
     </tr>
-    <tr>
-        <td><h3>{{ 'Invoice REF'|trans({}, 'pdf', locale) }} : <span>FA{{ order.REF|slice(3) }}</span></h3></td>
-    </tr>
-    <tr>
-        <td><h3>{{ 'Customer Number'|trans({}, 'pdf', locale) }} : <span>{% for customer in loop('customer.invoice', 'customer', {id: order.CUSTOMER, current: 0}) %}{{ customer.REF }}{% endfor %}</span></h3></td>
-    </tr>
-    {% for fragment in hook_block('invoice.information', {order: order_id, fields: 'title,value'}) %}
-    <tr>
-        <td><h3>{{ fragment.title }} : <span>{{ fragment.value }}</span></h3></td>
-    </tr>
-    {% endfor %}
 </table>
 
 {{ hook('invoice.after-information', {order: order_id}) }}
@@ -131,12 +155,12 @@
 {{ hook('invoice.after-addresses', {order: order_id}) }}
 
 <table width="100%" cellspacing="0" cellpadding="0" style="padding-top: 5mm; padding-bottom: 8mm">
-    <col style="width: 40%; padding: 1mm;" />
-    <col style="width: 12%; padding: 1mm;" />
-    <col style="width: 12%; padding: 1mm;" />
-    <col style="width: 12%; padding: 1mm;" />
-    <col style="width: 12%; padding: 1mm;" />
-    <col style="width: 12%; padding: 1mm;" />
+    <col style="width: 46%; padding: 1mm;" />
+    <col style="width: 11%; padding: 1mm;" />
+    <col style="width: 9%; padding: 1mm;" />
+    <col style="width: 11%; padding: 1mm;" />
+    <col style="width: 8%; padding: 1mm;" />
+    <col style="width: 15%; padding: 1mm;" />
 
     <tr class="table-1">
         <td><h4>{{ 'Product'|trans({}, 'pdf', locale) }}</h4></td>
@@ -149,14 +173,9 @@
     {% for product in loop('order-products', 'order_product', {order: order.ID}) %}
         <tr class="table-2">
             <td>
-                <p>
-                    {{ product.TITLE }} <br>
-                    {{ 'Product ref : '|trans({}, 'pdf', locale) }}{{ product.REF }}<br>
-                    {{ 'Combination ref : '|trans({}, 'pdf', locale) }}{{ product.PRODUCT_SALE_ELEMENTS_REF }}
-                {% for combination in loop('combinations', 'order_product_attribute_combination', {order_product: product.ID}) %}
-                    <span style="font-size: 9px;">{{ combination.ATTRIBUTE_TITLE }} - {{ combination.ATTRIBUTE_AVAILABILITY_TITLE }}</span><br>
-                {% endfor %}
-                </p>
+                <p class="product-title">{{ product.TITLE }}</p>
+                <p class="product-meta">{{ 'Ref'|trans({}, 'pdf', locale) }} {{ product.REF }}{% if product.PRODUCT_SALE_ELEMENTS_REF != product.REF %} / {{ product.PRODUCT_SALE_ELEMENTS_REF }}{% endif %}
+                {%- for combination in loop('combinations', 'order_product_attribute_combination', {order_product: product.ID}) %} · {{ combination.ATTRIBUTE_TITLE }} : {{ combination.ATTRIBUTE_AVAILABILITY_TITLE }}{% endfor %}</p>
 
                 {{ hook('invoice.product-list', {order_product: product.ID, order: order_id}) }}
             </td>
