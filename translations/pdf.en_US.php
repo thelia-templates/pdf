@@ -11,6 +11,7 @@
  */
 
 return [
+    'APE code: ' => 'APE code: ',
     'Combination ref : ' => 'Combination ref : ',
     'Customer Number' => 'Customer Number',
     'Customer discount rate' => 'Customer discount rate',
@@ -19,7 +20,9 @@ return [
     'Delivery module' => 'Delivery module',
     'Discount tax' => 'Discount tax',
     'Discount with tax' => 'Discount with tax',
+    'EORI: ' => 'EORI: ',
     'Email: ' => 'Email: ',
+    'Exempt from registration with the trade and companies register (RCS) and the trade register (RM)' => 'Exempt from registration with the trade and companies register (RCS) and the trade register (RM)',
     'INVOICE' => 'INVOICE',
     'Invoice REF' => 'Invoice REF',
     'Order REF' => 'Order REF',
@@ -34,6 +37,7 @@ return [
     'Product ref : ' => 'Product ref : ',
     'Quantity' => 'Quantity',
     'Ref' => 'Ref',
+    'SIRET: ' => 'SIRET: ',
     'Shipping tax' => 'Shipping tax',
     'Tax' => 'Tax',
     'Tax rate' => 'Tax rate',
@@ -43,6 +47,8 @@ return [
     'Total without tax' => 'Total without tax',
     'Unit taxed price' => 'Unit taxed price',
     'Unit. price' => 'Unit. price',
+    'VAT not applicable, article 293 B of the French tax code' => 'VAT not applicable, article 293 B of the French tax code',
+    'VAT: ' => 'VAT: ',
     'page' => 'page',
     'product' => 'product',
 ];

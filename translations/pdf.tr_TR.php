@@ -11,12 +11,15 @@
  */
 
 return [
+    'APE code: ' => 'APE code: ',
     'Customer Number' => 'Müşteri numarası',
     'DELIVERY' => 'TESLİMAT',
     'Delivery address' => 'Teslimat adresi',
     'Delivery module' => 'Teslimat modülü',
     'Discount' => 'İndirim',
+    'EORI: ' => 'EORI: ',
     'Email: ' => 'Eposta: ',
+    'Exempt from registration with the trade and companies register (RCS) and the trade register (RM)' => 'Exempt from registration with the trade and companies register (RCS) and the trade register (RM)',
     'INVOICE' => 'FATURA',
     'Invoice REF' => 'Fatura ürün kodu',
     'Invoice address' => 'Fatura Adresi',
@@ -27,6 +30,7 @@ return [
     'Product' => 'ürün',
     'Quantity' => 'Adet',
     'Ref' => 'Referans',
+    'SIRET: ' => 'SIRET: ',
     'Tax' => 'Kdv',
     'Taxed total' => 'Genel Toplam [Kdv dahil]',
     'Total' => 'Toplam',
@@ -34,6 +38,8 @@ return [
     'Total without tax' => 'Kdv toplam',
     'Unit taxed price' => 'Birim kdv  fiyatı',
     'Unit. price' => 'Birim Fiyatı',
+    'VAT not applicable, article 293 B of the French tax code' => 'VAT not applicable, article 293 B of the French tax code',
+    'VAT: ' => 'VAT: ',
     'delivery.imprint' => 'Teslimat Şekli',
     'invoice.imprint' => 'Fatura Şekli',
     'page' => 'sayfa',

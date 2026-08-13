@@ -11,6 +11,7 @@
  */
 
 return [
+    'APE code: ' => 'Code APE : ',
     'Combination ref : ' => 'Réf. déclinaison',
     'Customer Number' => 'Numéro de client',
     'Customer discount rate' => 'Taux de remise client',
@@ -18,7 +19,9 @@ return [
     'Delivery address' => 'Adresse de livraison',
     'Delivery module' => 'Module de livraison',
     'Discount with tax' => 'Remise TTC',
+    'EORI: ' => 'EORI : ',
     'Email: ' => 'Email :',
+    'Exempt from registration with the trade and companies register (RCS) and the trade register (RM)' => 'Dispensé d\'immatriculation au registre du commerce et des sociétés (RCS) et au répertoire des métiers (RM)',
     'INVOICE' => 'FACTURE',
     'Invoice REF' => 'Numéro de facture',
     'Invoice address' => 'Adresse de facturation',
@@ -31,6 +34,7 @@ return [
     'Product ref : ' => 'Réf. produit',
     'Quantity' => 'Quantité',
     'Ref' => 'Réf.',
+    'SIRET: ' => 'SIRET : ',
     'Tax' => 'Taxe',
     'Tax %name%: %tax%' => 'Dont %name%: %tax%',
     'Tax: %tax%' => 'Dont taxe %tax%',
@@ -47,6 +51,8 @@ return [
     'Tax rate' => 'Taux de taxe',
     'Postage tax amount' => 'Montant de la taxe de port',
     'Postage with tax' => 'Frais de port TTC',
+    'VAT not applicable, article 293 B of the French tax code' => 'TVA non applicable, article 293 B du CGI',
+    'VAT: ' => 'TVA : ',
     'page' => 'page',
     'product' => 'Produit',
 ];

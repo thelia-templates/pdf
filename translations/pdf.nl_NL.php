@@ -11,6 +11,12 @@
  */
 
 return [
+    'APE code: ' => 'APE code: ',
+    'EORI: ' => 'EORI: ',
+    'Exempt from registration with the trade and companies register (RCS) and the trade register (RM)' => 'Exempt from registration with the trade and companies register (RCS) and the trade register (RM)',
+    'SIRET: ' => 'SIRET: ',
+    'VAT not applicable, article 293 B of the French tax code' => 'VAT not applicable, article 293 B of the French tax code',
+    'VAT: ' => 'VAT: ',
     'page' => 'pagina',
     'product' => 'product',
 ];

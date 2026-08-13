@@ -11,15 +11,21 @@
  */
 
 return [
+    'APE code: ' => 'APE code: ',
     'DELIVERY' => 'PENGIRIMAN',
+    'EORI: ' => 'EORI: ',
     'Email: ' => 'E-mail: ',
+    'Exempt from registration with the trade and companies register (RCS) and the trade register (RM)' => 'Exempt from registration with the trade and companies register (RCS) and the trade register (RM)',
     'INVOICE' => 'FAKTUR',
     'Invoice REF' => 'REF Faktur',
     'Invoice address' => 'Alamat untuk faktur',
     'Phone: ' => 'Telepon: ',
     'Ref' => 'Ref',
+    'SIRET: ' => 'SIRET: ',
     'Total with tax' => 'Total termasuk pajak',
     'Total without tax' => 'Total tanpa pajak',
+    'VAT not applicable, article 293 B of the French tax code' => 'VAT not applicable, article 293 B of the French tax code',
+    'VAT: ' => 'VAT: ',
     'delivery.imprint' => 'jejak Pengiriman',
     'invoice.imprint' => 'jejak Faktur',
     'page' => 'halaman',

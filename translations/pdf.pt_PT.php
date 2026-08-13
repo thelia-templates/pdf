@@ -11,15 +11,21 @@
  */
 
 return [
+    'APE code: ' => 'APE code: ',
     'DELIVERY' => 'ENTREGA',
+    'EORI: ' => 'EORI: ',
     'Email: ' => 'Email: ',
+    'Exempt from registration with the trade and companies register (RCS) and the trade register (RM)' => 'Exempt from registration with the trade and companies register (RCS) and the trade register (RM)',
     'INVOICE' => 'FATURA',
     'Invoice REF' => 'Referencia da factura',
     'Invoice address' => 'Morada de facturação',
     'Phone: ' => 'Telefone: ',
     'Ref' => 'Ref',
+    'SIRET: ' => 'SIRET: ',
     'Total with tax' => 'Total (com IVA)',
     'Total without tax' => 'Total (sem IVA)',
+    'VAT not applicable, article 293 B of the French tax code' => 'VAT not applicable, article 293 B of the French tax code',
+    'VAT: ' => 'VAT: ',
     'page' => 'página',
     'product' => 'produto',
 ];

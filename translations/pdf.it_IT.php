@@ -11,17 +11,23 @@
  */
 
 return [
+    'APE code: ' => 'APE code: ',
     'Delivery address' => 'Indirizzo di consegna',
     'Delivery module' => 'Modulo di consegna',
     'Discount' => 'Sconto',
+    'EORI: ' => 'EORI: ',
+    'Exempt from registration with the trade and companies register (RCS) and the trade register (RM)' => 'Exempt from registration with the trade and companies register (RCS) and the trade register (RM)',
     'Invoice date' => 'Data della fattura',
     'Payment module' => 'Modulo di pagamento',
     'Postage' => 'Spese di spedizione',
     'Product' => 'Prodotto',
     'Quantity' => 'Quantità',
+    'SIRET: ' => 'SIRET: ',
     'Tax' => 'Tassa',
     'Taxed total' => 'Totale tassato',
     'Total' => 'Totale',
     'Unit taxed price' => 'Prezzo unitario tassato',
     'Unit. price' => 'Prezzo unitario',
+    'VAT not applicable, article 293 B of the French tax code' => 'VAT not applicable, article 293 B of the French tax code',
+    'VAT: ' => 'VAT: ',
 ];
