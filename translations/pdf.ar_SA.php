@@ -11,18 +11,24 @@
  */
 
 return [
+    'APE code: ' => 'APE code: ',
     'DELIVERY' => 'التوصيل',
     'Delivery address' => 'عنوان التوصيل',
     'Delivery module' => 'طريقة التوصيل',
     'Discount' => 'خصم',
+    'EORI: ' => 'EORI: ',
+    'Exempt from registration with the trade and companies register (RCS) and the trade register (RM)' => 'Exempt from registration with the trade and companies register (RCS) and the trade register (RM)',
     'INVOICE' => 'الفاتورة',
     'Invoice REF' => 'مرجع الفاتورة',
     'Postage' => 'الارسالية',
     'Quantity' => 'الكمية',
     'Ref' => 'المرجع',
+    'SIRET: ' => 'SIRET: ',
     'Total' => 'الإجمالي',
     'Total with tax' => 'الإجمالي مع الضريبة',
     'Total without tax' => 'المجموع بدون ضريبة',
+    'VAT not applicable, article 293 B of the French tax code' => 'VAT not applicable, article 293 B of the French tax code',
+    'VAT: ' => 'VAT: ',
     'page' => 'الصفحة',
     'product' => 'المنتج',
 ];

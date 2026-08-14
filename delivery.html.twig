@@ -57,6 +57,19 @@
 {{ hook('delivery.css') }}
 </style>
 
+{# Legal identifiers of the store, built once and printed both in the page footer and in the
+   imprint below. Each one shows up only when it has been filled in. #}
+{% set legal_identifiers = [] %}
+{% if config('store_siret') %}{% set legal_identifiers = legal_identifiers|merge(['SIRET: '|trans({}, 'pdf', locale) ~ config('store_siret')]) %}{% endif %}
+{% if config('store_ape_code') %}{% set legal_identifiers = legal_identifiers|merge(['APE code: '|trans({}, 'pdf', locale) ~ config('store_ape_code')]) %}{% endif %}
+{% if config('store_vat_intracom') %}{% set legal_identifiers = legal_identifiers|merge(['VAT: '|trans({}, 'pdf', locale) ~ config('store_vat_intracom')]) %}{% endif %}
+{% if config('store_eori') %}{% set legal_identifiers = legal_identifiers|merge(['EORI: '|trans({}, 'pdf', locale) ~ config('store_eori')]) %}{% endif %}
+{% if config('store_vat_exempt') == '1' %}{% set legal_identifiers = legal_identifiers|merge(['VAT not applicable, article 293 B of the French tax code'|trans({}, 'pdf', locale)]) %}{% endif %}
+{% if config('store_registration_exempt') == '1' %}{% set legal_identifiers = legal_identifiers|merge(['Exempt from registration with the trade and companies register (RCS) and the trade register (RM)'|trans({}, 'pdf', locale)]) %}{% endif %}
+{% if config('store_legal_mentions') %}{% set legal_identifiers = legal_identifiers|merge([config('store_legal_mentions')]) %}{% endif %}
+{# A shop that never filled the dedicated keys keeps printing its legacy free-text identifier. #}
+{% if legal_identifiers is empty and config('store_business_id') %}{% set legal_identifiers = [config('store_business_id')] %}{% endif %}
+
 <div class="pdf-footer">
     {{ hook('delivery.footer-top', {order: order_id}) }}
     <table>
@@ -70,7 +83,7 @@
                 {% set city = config('store_zipcode') ~ ' ' ~ config('store_city') %}
                 {{ config('store_name') }}
                 {% if city|trim %} - {{ city }}{% endif %}
-                {% if config('store_business_id') %} - {{ config('store_business_id') }}{% endif %}
+                {% if legal_identifiers is not empty %} - {{ legal_identifiers|join(' - ') }}{% endif %}
             </td>
             <td class="align-right">{{ 'page'|trans({}, 'pdf', locale) }} <span class="page-counter"></span></td>
         </tr>
@@ -120,7 +133,7 @@
                     {% if config('store_country') %}
                         {% for country in loop('address.country.title', 'country', {visible: '*', id: config('store_country')}) %}<p>{{ country.TITLE }}</p>{% endfor %}
                     {% endif %}
-                    {% if config('store_business_id') %}<p>{{ config('store_business_id') }}</p>{% endif %}
+                    {% for identifier in legal_identifiers %}<p>{{ identifier }}</p>{% endfor %}
                     {% if config('store_phone') %}<p>{{ 'Phone: '|trans({}, 'pdf', locale) }}{{ config('store_phone') }}</p>{% endif %}
                     {% if config('store_email') %}<p>{{ 'Email: '|trans({}, 'pdf', locale) }}{{ config('store_email') }}</p>{% endif %}
                 {% endif %}

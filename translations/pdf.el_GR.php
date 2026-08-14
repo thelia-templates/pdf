@@ -11,15 +11,21 @@
  */
 
 return [
+    'APE code: ' => 'APE code: ',
     'DELIVERY' => 'ΠΑΡΑΔΟΣΗ',
     'Delivery address' => 'Διεύθυνση παράδοσης',
+    'EORI: ' => 'EORI: ',
+    'Exempt from registration with the trade and companies register (RCS) and the trade register (RM)' => 'Exempt from registration with the trade and companies register (RCS) and the trade register (RM)',
     'INVOICE' => 'ΤΙΜΟΛΟΓΙΟ',
     'Invoice REF' => 'Αναφ Τιμολογίου',
     'Quantity' => 'Ποσότητα',
     'Ref' => 'Αναφ',
+    'SIRET: ' => 'SIRET: ',
     'Total' => 'Σύνολο',
     'Total with tax' => 'Σύνολο με ΦΠΑ',
     'Total without tax' => 'Σύνολο χωρίς ΦΠΑ',
+    'VAT not applicable, article 293 B of the French tax code' => 'VAT not applicable, article 293 B of the French tax code',
+    'VAT: ' => 'VAT: ',
     'page' => 'σελίδα',
     'product' => 'προϊόν',
 ];
