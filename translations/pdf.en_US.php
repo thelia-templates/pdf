@@ -13,6 +13,7 @@
 return [
     'APE code: ' => 'APE code: ',
     'Combination ref : ' => 'Combination ref : ',
+    'Company registration number' => 'Company registration number',
     'Customer Number' => 'Customer Number',
     'Customer discount rate' => 'Customer discount rate',
     'DELIVERY' => 'DELIVERY',
@@ -48,6 +49,7 @@ return [
     'Unit taxed price' => 'Unit taxed price',
     'Unit. price' => 'Unit. price',
     'VAT not applicable, article 293 B of the French tax code' => 'VAT not applicable, article 293 B of the French tax code',
+    'VAT number' => 'VAT number',
     'VAT: ' => 'VAT: ',
     'page' => 'page',
     'product' => 'product',

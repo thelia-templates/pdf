@@ -13,6 +13,7 @@
 return [
     'APE code: ' => 'Code APE : ',
     'Combination ref : ' => 'Réf. déclinaison',
+    'Company registration number' => 'Numéro d\'immatriculation de l\'entreprise',
     'Customer Number' => 'Numéro de client',
     'Customer discount rate' => 'Taux de remise client',
     'DELIVERY' => 'LIVRAISON',
@@ -52,6 +53,7 @@ return [
     'Postage tax amount' => 'Montant de la taxe de port',
     'Postage with tax' => 'Frais de port TTC',
     'VAT not applicable, article 293 B of the French tax code' => 'TVA non applicable, article 293 B du CGI',
+    'VAT number' => 'Numéro de TVA',
     'VAT: ' => 'TVA : ',
     'page' => 'page',
     'product' => 'Produit',
