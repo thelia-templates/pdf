@@ -161,6 +161,18 @@
         <td style="border-left: solid 1mm #f6993c;">
             <h3>{{ 'Invoice address'|trans({}, 'pdf', locale) }}</h3>
             {{ format_address(order.INVOICE_ADDRESS, locale)|raw }}
+            {# format_address() builds a postal address through commerceguys/addressing, which has
+               no slot for a tax identifier: the company name comes out as the organization line,
+               the identifiers have to be written here. Electronic invoicing requires both of them
+               for a business buyer. #}
+            {% for invoiceAddress in loop('invoice_address_identifiers', 'order_address', {id: order.INVOICE_ADDRESS}) %}
+                {% if invoiceAddress.SIRET %}
+                    <div>{{ 'Company registration number'|trans({}, 'pdf', locale) }} : {{ invoiceAddress.SIRET }}</div>
+                {% endif %}
+                {% if invoiceAddress.VAT_NUMBER %}
+                    <div>{{ 'VAT number'|trans({}, 'pdf', locale) }} : {{ invoiceAddress.VAT_NUMBER }}</div>
+                {% endif %}
+            {% endfor %}
         </td>
     </tr>
 </table>
