@@ -1,0 +1,176 @@
+<style>
+{% verbatim %}
+    @page { margin: 10mm 10mm 13mm 10mm; }
+
+    h1, h2, h3, h4 { color:#f6993c; margin: .5em 0; }
+    h1 { font-size: 30px; }
+    h2 { font-size: 16px; }
+    h3 { font-size: 14px; }
+    h4 { color:#58585a; font-size: 12px; }
+
+    p, td { color:#58585a; font-size: 9px; }
+    p { margin: .5em 0; }
+    span { font-size: 9px; }
+
+    table { border-collapse: collapse; width: 100%; }
+    tr { width: 100%; }
+    td { vertical-align: top; }
+
+    .table-info { margin-bottom: 15px; }
+    .table-info h3 { font-size: 12px; color: #58585a; margin-top: 0; margin-bottom: 6px; }
+    .table-info h3 span { font-size: inherit; color: #f6993c; }
+
+    .table-products td { border:solid 1px #dddddd; }
+    .table-products p { margin: 0; }
+    .table-products h3 { font-size: 12px; margin: .2em 0; }
+
+    .store-imprint p { font-size: 8px; color: #747475; margin: 0; line-height: 1.35; }
+    .store-imprint .store-imprint-name { font-size: 9px; color: #58585a; }
+
+    .product-title { font-size: 9px; }
+
+    .table-instructions { border-left: solid 3px #f6993c; }
+    .table-instructions p { font-size: 9px; }
+
+    .align-left { text-align: left; }
+    .align-center { text-align: center; }
+    .align-right{ text-align: right; }
+
+    /* dompdf pins a fixed element to the page content box, so a negative offset is needed
+       to move the footer into the bottom margin and keep it clear of the page content. */
+    .pdf-footer { position: fixed; bottom: -6mm; left: 0; right: 0; }
+    /* dompdf 3.1 resolves counter(page) but not counter(pages) (always 0), so only the
+       current page number is shown; the total is intentionally omitted. */
+    .pdf-footer .page-counter:after { content: counter(page); }
+{% endverbatim %}
+{{ hook('order-return.css') }}
+</style>
+
+{# Legal identifiers of the store, built once and printed both in the page footer and in the
+   imprint below. Each one shows up only when it has been filled in. #}
+{% set legal_identifiers = [] %}
+{% if config('store_siret') %}{% set legal_identifiers = legal_identifiers|merge(['SIRET: '|trans({}, 'pdf', locale) ~ config('store_siret')]) %}{% endif %}
+{% if config('store_ape_code') %}{% set legal_identifiers = legal_identifiers|merge(['APE code: '|trans({}, 'pdf', locale) ~ config('store_ape_code')]) %}{% endif %}
+{% if config('store_vat_intracom') %}{% set legal_identifiers = legal_identifiers|merge(['VAT: '|trans({}, 'pdf', locale) ~ config('store_vat_intracom')]) %}{% endif %}
+{% if config('store_eori') %}{% set legal_identifiers = legal_identifiers|merge(['EORI: '|trans({}, 'pdf', locale) ~ config('store_eori')]) %}{% endif %}
+{% if config('store_legal_mentions') %}{% set legal_identifiers = legal_identifiers|merge([config('store_legal_mentions')]) %}{% endif %}
+{# A shop that never filled the dedicated keys keeps printing its legacy free-text identifier. #}
+{% if legal_identifiers is empty and config('store_business_id') %}{% set legal_identifiers = [config('store_business_id')] %}{% endif %}
+
+<div class="pdf-footer">
+    <table>
+    <col style="width:15%">
+    <col style="width:70%">
+    <col style="width:15%">
+        <tbody>
+        <tr>
+            <td></td>
+            <td class="align-center">
+                {% set city = config('store_zipcode') ~ ' ' ~ config('store_city') %}
+                {{ store_name }}
+                {% if city|trim %} - {{ city }}{% endif %}
+                {% if legal_identifiers is not empty %} - {{ legal_identifiers|join(' - ') }}{% endif %}
+            </td>
+            <td class="align-right">{{ 'page'|trans({}, 'pdf', locale) }} <span class="page-counter"></span></td>
+        </tr>
+        </tbody>
+    </table>
+</div>
+
+<div class="pdf-header">{{ hook('order-return.header', {return_ref: return_ref}) }}</div>
+
+<table class="table-info">
+    <col style="width: 60%; padding: 0mm;" />
+    <col style="width: 40%; padding: 0mm;" />
+    <tr>
+        <td>
+            <table>
+                <tr>
+                    <td><h1>{{ 'RETURN'|trans({}, 'pdf', locale) }}</h1></td>
+                </tr>
+                <tr>
+                    <td><h3>{{ 'Return REF'|trans({}, 'pdf', locale) }} : <span>{{ return_ref }}</span></h3></td>
+                </tr>
+                <tr>
+                    <td><h3>{{ 'Order REF'|trans({}, 'pdf', locale) }} : <span>{{ order_ref }}</span></h3></td>
+                </tr>
+                <tr>
+                    <td><h3>{{ 'Return date'|trans({}, 'pdf', locale) }} : <span>{{ format_date(created_at, 'date', locale: locale) }}</span></h3></td>
+                </tr>
+                <tr>
+                    <td><h3>{{ 'Return status'|trans({}, 'pdf', locale) }} : <span>{{ status }}</span></h3></td>
+                </tr>
+                <tr>
+                    <td><h3>{{ 'Customer'|trans({}, 'pdf', locale) }} : <span>{{ customer_name }}</span></h3></td>
+                </tr>
+                {% if reason is not empty %}
+                <tr>
+                    <td><h3>{{ 'Return reason'|trans({}, 'pdf', locale) }} : <span>{{ reason }}</span></h3></td>
+                </tr>
+                {% endif %}
+            </table>
+        </td>
+        <td class="store-imprint align-right">
+            <p class="store-imprint-name"><strong>{{ store_name }}</strong></p>
+            {% for line in [config('store_address1'), config('store_address2'), config('store_address3')] %}
+                {% if line|trim %}<p>{{ line }}</p>{% endif %}
+            {% endfor %}
+            {% set city = config('store_zipcode') ~ ' ' ~ config('store_city') %}
+            {% if city|trim %}<p>{{ city }}</p>{% endif %}
+            {% for identifier in legal_identifiers %}<p>{{ identifier }}</p>{% endfor %}
+            {% if config('store_phone') %}<p>{{ 'Phone: '|trans({}, 'pdf', locale) }}{{ config('store_phone') }}</p>{% endif %}
+            {% if config('store_email') %}<p>{{ 'Email: '|trans({}, 'pdf', locale) }}{{ config('store_email') }}</p>{% endif %}
+        </td>
+    </tr>
+</table>
+
+{{ hook('order-return.after-information', {return_ref: return_ref}) }}
+
+<table class="table-products" style="padding-top: 5mm;">
+    <col style="width: 20%; padding: 1.5mm;" />
+    <col style="width: 50%; padding: 1.5mm;" />
+    <col style="width: 12%; padding: 1.5mm;" />
+    <col style="width: 18%; padding: 1.5mm;" />
+    <tr>
+        <td style="background:#f1f3f4;">
+            <h3 style="color:#58585a;">{{ 'Ref'|trans({}, 'pdf', locale) }}</h3>
+        </td>
+        <td style="background:#f1f3f4;">
+            <h3 style="color:#58585a;">{{ 'product'|trans({}, 'pdf', locale) }}</h3>
+        </td>
+        <td style="background-color:#f6993c;">
+            <h3 style="color:white; text-align:center;">{{ 'Quantity'|trans({}, 'pdf', locale) }}</h3>
+        </td>
+        <td style="background:#f1f3f4;">
+            <h3 style="color:#58585a; text-align:right;">{{ 'Refundable amount'|trans({}, 'pdf', locale) }}</h3>
+        </td>
+    </tr>
+    {% for line in lines %}
+    <tr>
+        <td><p>{{ line.ref }}</p></td>
+        <td><p class="product-title">{{ line.title }}</p></td>
+        <td style="text-align:center;"><p>{{ line.quantity }}</p></td>
+        <td style="text-align:right;"><p>{{ line.refund }}</p></td>
+    </tr>
+    {% endfor %}
+    <tr>
+        <td colspan="3" style="background:#f1f3f4;">
+            <h3 style="color:#58585a; text-align:right;">{{ 'Total refundable amount'|trans({}, 'pdf', locale) }}</h3>
+        </td>
+        <td style="background:#f1f3f4;">
+            <h3 style="color:#58585a; text-align:right;">{{ refund }}</h3>
+        </td>
+    </tr>
+</table>
+
+<table style="padding-top: 5mm;">
+    <col style="width: 100%; padding: 3mm;" />
+    <tr>
+        <td class="table-instructions">
+            <h3>{{ 'Instructions'|trans({}, 'pdf', locale) }}</h3>
+            <p>{{ 'Slip this document into the parcel and send it back to the address above.'|trans({}, 'pdf', locale) }}</p>
+        </td>
+    </tr>
+</table>
+
+{{ hook('order-return.after-summary', {return_ref: return_ref}) }}
