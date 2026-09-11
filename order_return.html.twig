@@ -46,13 +46,29 @@
 {{ hook('order-return.css') }}
 </style>
 
+{# The language of this document is the one the order was placed in, not the one of
+   whoever prints it: the customer is the one who reads the slip they put in the parcel.
+   `locale` cannot say it — the Twig engine replaces whatever the caller passed with the
+   language of the current request — so it is taken back from the order, the way the
+   delivery note reaches the order it prints. A language the merchant has since
+   deactivated is still the language of an old order, hence `active`/`visible` at '*'. #}
+{% set document_locale %}
+    {%- for order in loop('order-return.order', 'order', {ref: order_ref, customer: '*'}) -%}
+        {%- for language in loop('order-return.lang', 'lang', {id: order.LANG, active: '*', visible: '*'}) -%}
+            {{- language.LOCALE -}}
+        {%- endfor -%}
+    {%- endfor -%}
+{% endset %}
+{# An order that can no longer be read falls back to the language of the page. #}
+{% set document_locale = document_locale|trim ?: locale %}
+
 {# Legal identifiers of the store, built once and printed both in the page footer and in the
    imprint below. Each one shows up only when it has been filled in. #}
 {% set legal_identifiers = [] %}
-{% if config('store_siret') %}{% set legal_identifiers = legal_identifiers|merge(['SIRET: '|trans({}, 'pdf', locale) ~ config('store_siret')]) %}{% endif %}
-{% if config('store_ape_code') %}{% set legal_identifiers = legal_identifiers|merge(['APE code: '|trans({}, 'pdf', locale) ~ config('store_ape_code')]) %}{% endif %}
-{% if config('store_vat_intracom') %}{% set legal_identifiers = legal_identifiers|merge(['VAT: '|trans({}, 'pdf', locale) ~ config('store_vat_intracom')]) %}{% endif %}
-{% if config('store_eori') %}{% set legal_identifiers = legal_identifiers|merge(['EORI: '|trans({}, 'pdf', locale) ~ config('store_eori')]) %}{% endif %}
+{% if config('store_siret') %}{% set legal_identifiers = legal_identifiers|merge(['SIRET: '|trans({}, 'pdf', document_locale) ~ config('store_siret')]) %}{% endif %}
+{% if config('store_ape_code') %}{% set legal_identifiers = legal_identifiers|merge(['APE code: '|trans({}, 'pdf', document_locale) ~ config('store_ape_code')]) %}{% endif %}
+{% if config('store_vat_intracom') %}{% set legal_identifiers = legal_identifiers|merge(['VAT: '|trans({}, 'pdf', document_locale) ~ config('store_vat_intracom')]) %}{% endif %}
+{% if config('store_eori') %}{% set legal_identifiers = legal_identifiers|merge(['EORI: '|trans({}, 'pdf', document_locale) ~ config('store_eori')]) %}{% endif %}
 {% if config('store_legal_mentions') %}{% set legal_identifiers = legal_identifiers|merge([config('store_legal_mentions')]) %}{% endif %}
 {# A shop that never filled the dedicated keys keeps printing its legacy free-text identifier. #}
 {% if legal_identifiers is empty and config('store_business_id') %}{% set legal_identifiers = [config('store_business_id')] %}{% endif %}
@@ -71,7 +87,7 @@
                 {% if city|trim %} - {{ city }}{% endif %}
                 {% if legal_identifiers is not empty %} - {{ legal_identifiers|join(' - ') }}{% endif %}
             </td>
-            <td class="align-right">{{ 'page'|trans({}, 'pdf', locale) }} <span class="page-counter"></span></td>
+            <td class="align-right">{{ 'page'|trans({}, 'pdf', document_locale) }} <span class="page-counter"></span></td>
         </tr>
         </tbody>
     </table>
@@ -86,26 +102,26 @@
         <td>
             <table>
                 <tr>
-                    <td><h1>{{ 'RETURN'|trans({}, 'pdf', locale) }}</h1></td>
+                    <td><h1>{{ 'RETURN'|trans({}, 'pdf', document_locale) }}</h1></td>
                 </tr>
                 <tr>
-                    <td><h3>{{ 'Return REF'|trans({}, 'pdf', locale) }} : <span>{{ return_ref }}</span></h3></td>
+                    <td><h3>{{ 'Return REF'|trans({}, 'pdf', document_locale) }} : <span>{{ return_ref }}</span></h3></td>
                 </tr>
                 <tr>
-                    <td><h3>{{ 'Order REF'|trans({}, 'pdf', locale) }} : <span>{{ order_ref }}</span></h3></td>
+                    <td><h3>{{ 'Order REF'|trans({}, 'pdf', document_locale) }} : <span>{{ order_ref }}</span></h3></td>
                 </tr>
                 <tr>
-                    <td><h3>{{ 'Return date'|trans({}, 'pdf', locale) }} : <span>{{ format_date(created_at, 'date', locale: locale) }}</span></h3></td>
+                    <td><h3>{{ 'Return date'|trans({}, 'pdf', document_locale) }} : <span>{{ format_date(created_at, 'date', locale: document_locale) }}</span></h3></td>
                 </tr>
                 <tr>
-                    <td><h3>{{ 'Return status'|trans({}, 'pdf', locale) }} : <span>{{ status }}</span></h3></td>
+                    <td><h3>{{ 'Return status'|trans({}, 'pdf', document_locale) }} : <span>{{ status }}</span></h3></td>
                 </tr>
                 <tr>
-                    <td><h3>{{ 'Customer'|trans({}, 'pdf', locale) }} : <span>{{ customer_name }}</span></h3></td>
+                    <td><h3>{{ 'Customer'|trans({}, 'pdf', document_locale) }} : <span>{{ customer_name }}</span></h3></td>
                 </tr>
                 {% if reason is not empty %}
                 <tr>
-                    <td><h3>{{ 'Return reason'|trans({}, 'pdf', locale) }} : <span>{{ reason }}</span></h3></td>
+                    <td><h3>{{ 'Return reason'|trans({}, 'pdf', document_locale) }} : <span>{{ reason }}</span></h3></td>
                 </tr>
                 {% endif %}
             </table>
@@ -118,8 +134,8 @@
             {% set city = config('store_zipcode') ~ ' ' ~ config('store_city') %}
             {% if city|trim %}<p>{{ city }}</p>{% endif %}
             {% for identifier in legal_identifiers %}<p>{{ identifier }}</p>{% endfor %}
-            {% if config('store_phone') %}<p>{{ 'Phone: '|trans({}, 'pdf', locale) }}{{ config('store_phone') }}</p>{% endif %}
-            {% if config('store_email') %}<p>{{ 'Email: '|trans({}, 'pdf', locale) }}{{ config('store_email') }}</p>{% endif %}
+            {% if config('store_phone') %}<p>{{ 'Phone: '|trans({}, 'pdf', document_locale) }}{{ config('store_phone') }}</p>{% endif %}
+            {% if config('store_email') %}<p>{{ 'Email: '|trans({}, 'pdf', document_locale) }}{{ config('store_email') }}</p>{% endif %}
         </td>
     </tr>
 </table>
@@ -133,16 +149,16 @@
     <col style="width: 18%; padding: 1.5mm;" />
     <tr>
         <td style="background:#f1f3f4;">
-            <h3 style="color:#58585a;">{{ 'Ref'|trans({}, 'pdf', locale) }}</h3>
+            <h3 style="color:#58585a;">{{ 'Ref'|trans({}, 'pdf', document_locale) }}</h3>
         </td>
         <td style="background:#f1f3f4;">
-            <h3 style="color:#58585a;">{{ 'product'|trans({}, 'pdf', locale) }}</h3>
+            <h3 style="color:#58585a;">{{ 'product'|trans({}, 'pdf', document_locale) }}</h3>
         </td>
         <td style="background-color:#f6993c;">
-            <h3 style="color:white; text-align:center;">{{ 'Quantity'|trans({}, 'pdf', locale) }}</h3>
+            <h3 style="color:white; text-align:center;">{{ 'Quantity'|trans({}, 'pdf', document_locale) }}</h3>
         </td>
         <td style="background:#f1f3f4;">
-            <h3 style="color:#58585a; text-align:right;">{{ 'Refundable amount'|trans({}, 'pdf', locale) }}</h3>
+            <h3 style="color:#58585a; text-align:right;">{{ 'Refundable amount'|trans({}, 'pdf', document_locale) }}</h3>
         </td>
     </tr>
     {% for line in lines %}
@@ -155,7 +171,7 @@
     {% endfor %}
     <tr>
         <td colspan="3" style="background:#f1f3f4;">
-            <h3 style="color:#58585a; text-align:right;">{{ 'Total refundable amount'|trans({}, 'pdf', locale) }}</h3>
+            <h3 style="color:#58585a; text-align:right;">{{ 'Total refundable amount'|trans({}, 'pdf', document_locale) }}</h3>
         </td>
         <td style="background:#f1f3f4;">
             <h3 style="color:#58585a; text-align:right;">{{ refund }}</h3>
@@ -167,8 +183,8 @@
     <col style="width: 100%; padding: 3mm;" />
     <tr>
         <td class="table-instructions">
-            <h3>{{ 'Instructions'|trans({}, 'pdf', locale) }}</h3>
-            <p>{{ 'Slip this document into the parcel and send it back to the address above.'|trans({}, 'pdf', locale) }}</p>
+            <h3>{{ 'Instructions'|trans({}, 'pdf', document_locale) }}</h3>
+            <p>{{ 'Slip this document into the parcel and send it back to the address above.'|trans({}, 'pdf', document_locale) }}</p>
         </td>
     </tr>
 </table>
