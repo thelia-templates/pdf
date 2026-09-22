@@ -63,4 +63,12 @@ return [
     'Return status' => 'Return status',
     'Slip this document into the parcel and send it back to the address above.' => 'Slip this document into the parcel and send it back to the address above.',
     'Total refundable amount' => 'Total refundable amount',
+    'CREDIT NOTE' => 'CREDIT NOTE',
+    'Credit note REF' => 'Credit note REF',
+    'Credit note date' => 'Credit note date',
+    'Credit note type' => 'Credit note type',
+    'Original invoice REF' => 'Original invoice REF',
+    'Tax %rate%' => 'Tax %rate%',
+    'Discount without tax' => 'Discount without tax',
+    'Total tax amount' => 'Total tax amount',
 ];

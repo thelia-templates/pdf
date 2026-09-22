@@ -58,4 +58,11 @@ return [
     'Unit taxed price' => 'Stukprijs incl. btw',
     'Unit. price' => 'Stukprijs',
     'VAT number' => 'Btw-nummer',
+    'CREDIT NOTE' => 'CREDITNOTA',
+    'Credit note REF' => 'Creditnotanummer',
+    'Credit note date' => 'Datum creditnota',
+    'Credit note type' => 'Type creditnota',
+    'Original invoice REF' => 'Oorspronkelijk factuurnummer',
+    'Tax %rate%' => 'Btw %rate%',
+    'Discount without tax' => 'Korting excl. btw',
 ];
