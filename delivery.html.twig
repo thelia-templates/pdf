@@ -215,6 +215,21 @@
         {% endfor %}
     </table>
 
+    {# What the buyer wrote for whoever receives the parcel. It belongs on this document
+       and on the picking list, and never on the invoice: the recipient reads the parcel,
+       the buyer reads the bill. #}
+    {% if order.GIFT_MESSAGE|default('') %}
+    <table style="padding-top: 5mm;">
+        <col style="width: 100%; padding: 3mm;" />
+        <tr>
+            <td class="table-3-module" style="border-left:solid 3px #f6993c; padding-top: 2mm">
+                <h3>{{ 'Message for the recipient'|trans({}, 'pdf', document_locale) }}</h3>
+                <p>{{ order.GIFT_MESSAGE|nl2br }}</p>
+            </td>
+        </tr>
+    </table>
+    {% endif %}
+
     <table style="padding-top: 5mm;">
         <col style="width: 40%; padding: 3mm;" />
         <tr>
