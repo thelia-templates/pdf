@@ -26,6 +26,7 @@ return [
     'Exempt from registration with the trade and companies register (RCS) and the trade register (RM)' => 'Exempt from registration with the trade and companies register (RCS) and the trade register (RM)',
     'INVOICE' => 'INVOICE',
     'Invoice REF' => 'Invoice REF',
+    'Message for the recipient' => 'Message for the recipient',
     'Order REF' => 'Order REF',
     'Invoice address' => 'Invoice address',
     'Invoice date' => 'Invoice date',

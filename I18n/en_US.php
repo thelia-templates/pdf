@@ -24,6 +24,7 @@ return [
     'Invoice REF' => 'Invoice REF',
     'Invoice address' => 'Invoice address',
     'Invoice date' => 'Invoice date',
+    'Message for the recipient' => 'Message for the recipient',
     'Payment module' => 'Payment module',
     'Phone: ' => 'Phone: ',
     'Postage' => 'Postage',

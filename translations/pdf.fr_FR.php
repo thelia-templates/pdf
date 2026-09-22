@@ -27,6 +27,7 @@ return [
     'Invoice REF' => 'Numéro de facture',
     'Invoice address' => 'Adresse de facturation',
     'Invoice date' => 'Date de facturation',
+    'Message for the recipient' => 'Message pour le destinataire',
     'Payment module' => 'Module de paiement',
     'Postage without tax' => 'Frais de port sans taxe',
     'Phone: ' => 'Tél.: ',
