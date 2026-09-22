@@ -34,6 +34,7 @@ return [
     'Postage' => 'Postage',
     'Postage tax amount' => 'Postage tax amount',
     'Postage with tax' => 'Postage with tax',
+    'Postage without tax' => 'Postage without tax',
     'Product' => 'Product',
     'Product ref : ' => 'Product ref : ',
     'Quantity' => 'Quantity',
