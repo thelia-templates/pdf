@@ -66,15 +66,17 @@
 {% endset %}
 {% set credit_note_order_id = credit_note_order_id|trim %}
 
-{# The language of this document is the one the order was placed in, not the one of
-   whoever prints it: the customer is the one who keeps it. `locale` cannot say it — the
-   Twig engine replaces whatever the caller passed with the language of the current
-   request — so it is taken back from the order the credit note refunds. A language the
-   merchant has since deactivated is still the language of an old order, hence
-   `active`/`visible` at '*'. A credit note without order is printed in the language of
-   the page. #}
-{% set document_locale %}
-    {%- if credit_note_order_id -%}
+{# The language of this document is the one the module asks for when it names it
+   (`document_locale`: the language the customer prefers), otherwise the one the order was
+   placed in, not the one of whoever prints it: the customer is the one who keeps it.
+   `locale` cannot say it — the Twig engine replaces whatever the caller passed with the
+   language of the current request — so it is taken back from the order the credit note
+   refunds. A language the merchant has since deactivated is still the language of an old
+   order, hence `active`/`visible` at '*'. A credit note without order is printed in the
+   language of the page. #}
+{% set requested_locale = document_locale is defined ? (document_locale ?? '')|trim : '' %}
+{% set order_locale %}
+    {%- if requested_locale == '' and credit_note_order_id -%}
         {%- for order in loop('document-language.order', 'order', {id: credit_note_order_id, customer: '*'}) -%}
             {%- for language in loop('document-language.lang', 'lang', {id: order.LANG, active: '*', visible: '*'}) -%}
                 {{- language.LOCALE -}}
@@ -82,7 +84,10 @@
         {%- endfor -%}
     {%- endif -%}
 {% endset %}
-{% set document_locale = document_locale|trim ?: locale %}
+{% set document_locale = requested_locale ?: (order_locale|trim ?: locale) %}
+{# The loops of the module translate the type of the credit note in the language of the
+   session: the module hands over the title in the language of the document when it can. #}
+{% set requested_type_title = credit_note_type_title is defined ? (credit_note_type_title ?? '')|trim : '' %}
 
 {# Legal identifiers of the store, built once and printed both in the page footer and in the
    imprint below. Each one shows up only when it has been filled in. #}
@@ -152,9 +157,10 @@
                 <tr>
                     <td><h3>{{ 'Customer Number'|trans({}, 'pdf', document_locale) }} : <span>{% for customer in loop('credit-note.customer', 'customer', {id: note.CUSTOMER_ID, current: 0}) %}{{ customer.REF }}{% endfor %}</span></h3></td>
                 </tr>
-                {% if note.TYPE_TITLE %}
+                {% set type_title = requested_type_title ?: note.TYPE_TITLE %}
+                {% if type_title %}
                 <tr>
-                    <td><h3>{{ 'Credit note type'|trans({}, 'pdf', document_locale) }} : <span>{{ note.TYPE_TITLE }}</span></h3></td>
+                    <td><h3>{{ 'Credit note type'|trans({}, 'pdf', document_locale) }} : <span>{{ type_title }}</span></h3></td>
                 </tr>
                 {% endif %}
                 {% if note.ORDER_ID %}
