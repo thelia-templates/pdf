@@ -73,14 +73,28 @@
 {# An order that can no longer be read falls back to the language of the page. #}
 {% set document_locale = document_locale|trim ?: locale %}
 
-{# Legal identifiers of the store, built once and printed both in the page footer and in the
-   imprint below. Each one shows up only when it has been filled in. #}
+
+{# The reverse charge is a fact of the order, not of the shop, so it is read before the
+   identifiers are assembled: the page footer that prints them is laid out above the
+   order loop. A `set` made inside a loop survives it only for a name that already
+   existed outside, which is why the flag is initialised here first. #}
+{% set vat_exempted = false %}
+{% for exemptedOrder in loop('delivery_vat_exemption', 'order', {id: order_id, customer: '*'}) %}
+    {% for exemptedAddress in loop('delivery_vat_exemption_address', 'order_address', {id: exemptedOrder.INVOICE_ADDRESS}) %}
+        {% set vat_exempted = exemptedAddress.VAT_EXEMPTED %}
+    {% endfor %}
+{% endfor %}
+
+{# Legal identifiers printed both in the page footer and in the imprint below. Each one shows
+   up only when it applies: all of them describe the shop, except the reverse charge, which
+   directive 2006/112/EC requires on the invoice of a buyer who owes the VAT himself. #}
 {% set legal_identifiers = [] %}
 {% if config('store_siret') %}{% set legal_identifiers = legal_identifiers|merge(['SIRET: '|trans({}, 'pdf', document_locale) ~ config('store_siret')]) %}{% endif %}
 {% if config('store_ape_code') %}{% set legal_identifiers = legal_identifiers|merge(['APE code: '|trans({}, 'pdf', document_locale) ~ config('store_ape_code')]) %}{% endif %}
 {% if config('store_vat_intracom') %}{% set legal_identifiers = legal_identifiers|merge(['VAT: '|trans({}, 'pdf', document_locale) ~ config('store_vat_intracom')]) %}{% endif %}
 {% if config('store_eori') %}{% set legal_identifiers = legal_identifiers|merge(['EORI: '|trans({}, 'pdf', document_locale) ~ config('store_eori')]) %}{% endif %}
 {% if config('store_vat_exempt') == '1' %}{% set legal_identifiers = legal_identifiers|merge(['VAT not applicable, article 293 B of the French tax code'|trans({}, 'pdf', document_locale)]) %}{% endif %}
+{% if vat_exempted %}{% set legal_identifiers = legal_identifiers|merge(['Reverse charge: VAT due by the customer'|trans({}, 'pdf', document_locale)]) %}{% endif %}
 {% if config('store_registration_exempt') == '1' %}{% set legal_identifiers = legal_identifiers|merge(['Exempt from registration with the trade and companies register (RCS) and the trade register (RM)'|trans({}, 'pdf', document_locale)]) %}{% endif %}
 {% if config('store_legal_mentions') %}{% set legal_identifiers = legal_identifiers|merge([config('store_legal_mentions')]) %}{% endif %}
 {# A shop that never filled the dedicated keys keeps printing its legacy free-text identifier. #}
