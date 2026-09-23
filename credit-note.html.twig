@@ -256,7 +256,9 @@
     </tr>
     {% for detail in loop('credit-note.details', 'credit-note-detail', {credit_note_id: credit_note_id}) %}
         {% set unit_tax = detail.PRICE_WITH_TAX - detail.PRICE %}
-        {% set tax_rate = detail.PRICE > 0 ? (unit_tax / detail.PRICE * 100)|round(2) : 0 %}
+        {# A fee the merchant deducts is a negative line: its rate is the same ratio, read on the
+           signed prices. Only a line without price has no rate. #}
+        {% set tax_rate = detail.PRICE != 0 ? (unit_tax / detail.PRICE * 100)|round(2) : 0 %}
         {% set rate_key = 'rate-' ~ tax_rate %}
         {% set tax_row = tax_rows[rate_key]|default({rate: tax_rate, base: 0, amount: 0}) %}
         {% set tax_rows = tax_rows|merge({(rate_key): {
