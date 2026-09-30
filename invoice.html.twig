@@ -276,14 +276,10 @@
                 <col style="width: 50%; padding: 0 1mm 1mm;">
                 <col style="width: 50%; padding: 0 1mm 1mm;">
 
-                {% set tva = 0.20 %}
-                {% for invoiceAddress in loop('invoice_address', 'order_address', {id: order.INVOICE_ADDRESS}) %}
-                    {% if invoiceAddress.COUNTRY == 20 and date(order.INVOICE_DATE) > date('2020-07-07') %}{% set tva = 0.21 %}{% endif %}
-                {% endfor %}
-
                 {% set untaxedCart = order.TOTAL_ITEMS_AMOUNT %}
                 {% set untaxedPostage = order.POSTAGE_UNTAXED %}
                 {% set postageTax = order.POSTAGE_TAX %}
+                {% set tva = untaxedPostage > 0 ? postageTax / untaxedPostage : 0 %}
                 {% set untaxedTotalWithUntaxedPostage = order.TOTAL_ITEMS_AMOUNT + order.POSTAGE_UNTAXED %}
 
                 {# Postage totals: without tax / tax rate / with tax #}
@@ -297,7 +293,7 @@
                 </tr>
                 <tr>
                     <td class="table-3-1"><p>{{ 'Tax rate'|trans({}, 'pdf', document_locale) }}</p></td>
-                    <td class="table-3-1 align-right"><p>{{ tva * 100 }} %</p></td>
+                    <td class="table-3-1 align-right"><p>{{ (tva * 100)|round(2) }} %</p></td>
                 </tr>
                 <tr>
                     <td class="table-3-1"><p>{{ 'Postage tax amount'|trans({}, 'pdf', document_locale) }}</p></td>
