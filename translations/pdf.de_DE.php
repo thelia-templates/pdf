@@ -64,4 +64,11 @@ return [
     'Total refundable amount' => 'Erstattungsfähiger Gesamtbetrag',
     'Total tax amount' => 'Steuerbetrag gesamt',
     'VAT number' => 'USt-IdNr.',
+    'CREDIT NOTE' => 'GUTSCHRIFT',
+    'Credit note REF' => 'Gutschriftsnummer',
+    'Credit note date' => 'Gutschriftsdatum',
+    'Credit note type' => 'Art der Gutschrift',
+    'Original invoice REF' => 'Ursprüngliche Rechnungsnummer',
+    'Tax %rate%' => 'MwSt. %rate%',
+    'Discount without tax' => 'Rabatt ohne MwSt.',
 ];

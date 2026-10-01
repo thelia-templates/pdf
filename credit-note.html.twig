@@ -1,0 +1,358 @@
+<style>
+{% verbatim %}
+    @page { margin: 10mm 10mm 13mm 10mm; }
+
+    h1, h2, h3, h4 {
+        color:#f6993c;
+        margin: .5em 0;
+    }
+
+    h1 { font-size: 30px; }
+    h2 { font-size: 16px; }
+    h3 { font-size: 14px; }
+    h4 { color:#58585a; font-size: 12px; }
+
+    p, td { color:#58585a; font-size: 9px; }
+    p { margin: .5em 0; }
+    span { font-size: 9px; }
+
+    table { border-collapse: collapse; width: 100%; }
+    tr { width: 100%; }
+    td { vertical-align: top; }
+
+    .table-info { margin-bottom : 15px; }
+    .table-info h3 { font-size: 12px; color: #58585a; margin-top: 0; margin-bottom: 6px; }
+    .table-info h3 span { font-size: inherit; color: #f6993c; }
+
+    .table-1 td { background: #f1f3f4; border:solid 1px #bcbdc0; }
+    .table-1 h4 { font-size: 10px; margin: .2em 0; }
+    .table-2 td { border:solid 1px #bcbdc0; }
+    .table-2 p { margin: 0; }
+
+    .store-imprint p { font-size: 8px; color: #747475; margin: 0; line-height: 1.35; }
+    .store-imprint .store-imprint-name { font-size: 9px; color: #58585a; }
+
+    .product-title { font-size: 9px; }
+    .product-meta { font-size: 8px; color: #747475; }
+
+    .table-3-1, .table-3-2 { border: solid 1px #bcbdc0; }
+    .table-3-1 span { font-size: 8px; color: #747475; }
+    .table-3-1 p { font-size: 10px; }
+    .table-3-2 { background: #f1f3f4; }
+
+    .table-3-notice h3 { margin-top: 1.5em; }
+    .table-3-notice p { font-size: 9px; }
+
+    .align-left { text-align: left; }
+    .align-center { text-align: center; }
+    .align-right{ text-align: right; }
+
+    /* dompdf pins a fixed element to the page content box, so a negative offset is needed
+       to move the footer into the bottom margin and keep it clear of the page content. */
+    .pdf-footer { position: fixed; bottom: -6mm; left: 0; right: 0; }
+    /* dompdf 3.1 resolves counter(page) but not counter(pages) (always 0), so only the
+       current page number is shown; the total is intentionally omitted. */
+    .pdf-footer .page-counter:after { content: counter(page); }
+{% endverbatim %}
+{{ hook('credit-note.css') }}
+</style>
+
+{# The credit note is read once here for the language of the document, then again below for
+   its content: the `credit-note` loop of the CreditNote module answers both. #}
+{% set credit_note_order_id %}
+    {%- for note in loop('document-language.credit-note', 'credit-note', {id: credit_note_id}) -%}
+        {{- note.ORDER_ID -}}
+    {%- endfor -%}
+{% endset %}
+{% set credit_note_order_id = credit_note_order_id|trim %}
+
+{# The language of this document is the one the module asks for when it names it
+   (`document_locale`: the language the customer prefers), otherwise the one the order was
+   placed in, not the one of whoever prints it: the customer is the one who keeps it.
+   `locale` cannot say it — the Twig engine replaces whatever the caller passed with the
+   language of the current request — so it is taken back from the order the credit note
+   refunds. A language the merchant has since deactivated is still the language of an old
+   order, hence `active`/`visible` at '*'. A credit note without order is printed in the
+   language of the page. #}
+{% set requested_locale = document_locale is defined ? (document_locale ?? '')|trim : '' %}
+{% set order_locale %}
+    {%- if requested_locale == '' and credit_note_order_id -%}
+        {%- for order in loop('document-language.order', 'order', {id: credit_note_order_id, customer: '*'}) -%}
+            {%- for language in loop('document-language.lang', 'lang', {id: order.LANG, active: '*', visible: '*'}) -%}
+                {{- language.LOCALE -}}
+            {%- endfor -%}
+        {%- endfor -%}
+    {%- endif -%}
+{% endset %}
+{% set document_locale = requested_locale ?: (order_locale|trim ?: locale) %}
+{# The loops of the module translate the type of the credit note in the language of the
+   session: the module hands over the title in the language of the document when it can. #}
+{% set requested_type_title = credit_note_type_title is defined ? (credit_note_type_title ?? '')|trim : '' %}
+
+{# Legal identifiers of the store, built once and printed both in the page footer and in the
+   imprint below. Each one shows up only when it has been filled in. #}
+{% set legal_identifiers = [] %}
+{% if config('store_siret') %}{% set legal_identifiers = legal_identifiers|merge(['SIRET: '|trans({}, 'pdf', document_locale) ~ config('store_siret')]) %}{% endif %}
+{% if config('store_ape_code') %}{% set legal_identifiers = legal_identifiers|merge(['APE code: '|trans({}, 'pdf', document_locale) ~ config('store_ape_code')]) %}{% endif %}
+{% if config('store_vat_intracom') %}{% set legal_identifiers = legal_identifiers|merge(['VAT: '|trans({}, 'pdf', document_locale) ~ config('store_vat_intracom')]) %}{% endif %}
+{% if config('store_eori') %}{% set legal_identifiers = legal_identifiers|merge(['EORI: '|trans({}, 'pdf', document_locale) ~ config('store_eori')]) %}{% endif %}
+{% if config('store_vat_exempt') == '1' %}{% set legal_identifiers = legal_identifiers|merge(['VAT not applicable, article 293 B of the French tax code'|trans({}, 'pdf', document_locale)]) %}{% endif %}
+{% if config('store_registration_exempt') == '1' %}{% set legal_identifiers = legal_identifiers|merge(['Exempt from registration with the trade and companies register (RCS) and the trade register (RM)'|trans({}, 'pdf', document_locale)]) %}{% endif %}
+{% if config('store_legal_mentions') %}{% set legal_identifiers = legal_identifiers|merge([config('store_legal_mentions')]) %}{% endif %}
+{# A shop that never filled the dedicated keys keeps printing its legacy free-text identifier. #}
+{% if legal_identifiers is empty and config('store_business_id') %}{% set legal_identifiers = [config('store_business_id')] %}{% endif %}
+
+<div class="pdf-footer">
+    {{ hook('credit-note.footer-top', {credit_note: credit_note_id}) }}
+    <table>
+    <col style="width:15%">
+    <col style="width:70%">
+    <col style="width:15%">
+        <tbody>
+        <tr>
+            <td></td>
+            <td class="align-center">
+                {% set city = config('store_zipcode') ~ ' ' ~ config('store_city') %}
+                {{ config('store_name') }}
+                {% if city|trim %} - {{ city }}{% endif %}
+                {% if legal_identifiers is not empty %} - {{ legal_identifiers|join(' - ') }}{% endif %}
+            </td>
+            <td class="align-right">{{ 'page'|trans({}, 'pdf', document_locale) }} <span class="page-counter"></span></td>
+        </tr>
+        </tbody>
+    </table>
+</div>
+
+<div class="pdf-header">{{ hook('credit-note.header', {credit_note: credit_note_id}) }}</div>
+
+{% for note in loop('credit-note.document', 'credit-note', {id: credit_note_id}) %}
+{% set currency = note.CURRENCY_ID %}
+<table class="table-info" style="margin-bottom: 15px;">
+    <tr>
+        <td>
+            <h1 style="text-transform: capitalize"><strong style="color: #58585a;">{{ 'CREDIT NOTE'|trans({}, 'pdf', document_locale) }}</strong> {{ config('store_name') }}</h1>
+        </td>
+    </tr>
+</table>
+<table class="table-info">
+    <col style="width: 60%; padding: 0mm;" />
+    <col style="width: 40%; padding: 0mm;" />
+    <tr>
+        <td>
+            <table>
+                <tr>
+                    <td><h3>{{ 'Credit note date'|trans({}, 'pdf', document_locale) }} : <span>{{ format_date(note.INVOICE_DATE ?: note.CREATED_AT, 'date', locale: document_locale) }}</span></h3></td>
+                </tr>
+                <tr>
+                    <td><h3>{{ 'Credit note REF'|trans({}, 'pdf', document_locale) }} : <span>{{ note.REF }}</span></h3></td>
+                </tr>
+                {# The accounting number the module assigns when the credit note is accepted. It is the
+                   number a bookkeeper files the document under, distinct from the reference above and
+                   from the invoice of the order. #}
+                {% if note.INVOICE_REF %}
+                <tr>
+                    <td><h3>{{ 'Invoice REF'|trans({}, 'pdf', document_locale) }} : <span>{{ note.INVOICE_REF }}</span></h3></td>
+                </tr>
+                {% endif %}
+                <tr>
+                    <td><h3>{{ 'Customer Number'|trans({}, 'pdf', document_locale) }} : <span>{% for customer in loop('credit-note.customer', 'customer', {id: note.CUSTOMER_ID, current: 0}) %}{{ customer.REF }}{% endfor %}</span></h3></td>
+                </tr>
+                {% set type_title = requested_type_title ?: note.TYPE_TITLE %}
+                {% if type_title %}
+                <tr>
+                    <td><h3>{{ 'Credit note type'|trans({}, 'pdf', document_locale) }} : <span>{{ type_title }}</span></h3></td>
+                </tr>
+                {% endif %}
+                {% if note.ORDER_ID %}
+                    {% for order in loop('credit-note.order', 'order', {id: note.ORDER_ID, customer: '*'}) %}
+                    <tr>
+                        <td><h3>{{ 'Order REF'|trans({}, 'pdf', document_locale) }} : <span>{{ order.REF }}</span></h3></td>
+                    </tr>
+                    {% if order.INVOICE_REF %}
+                    <tr>
+                        <td><h3>{{ 'Original invoice REF'|trans({}, 'pdf', document_locale) }} : <span>{{ order.INVOICE_REF }}</span></h3></td>
+                    </tr>
+                    {% endif %}
+                    {% endfor %}
+                {% endif %}
+                {% for fragment in hook_block('credit-note.information', {credit_note: credit_note_id, fields: 'title,value'}) %}
+                <tr>
+                    <td><h3>{{ fragment.title }} : <span>{{ fragment.value }}</span></h3></td>
+                </tr>
+                {% endfor %}
+            </table>
+        </td>
+        <td class="store-imprint align-right">
+            {% set imprint = hook('credit-note.imprint', {credit_note: credit_note_id}) %}
+            {% if imprint is not empty %}{{ imprint }}{% else %}
+                <p class="store-imprint-name"><strong>{{ config('store_name') }}</strong></p>
+                {% for line in [config('store_address1'), config('store_address2'), config('store_address3')] %}
+                    {% if line|trim %}<p>{{ line }}</p>{% endif %}
+                {% endfor %}
+                {% set city = config('store_zipcode') ~ ' ' ~ config('store_city') %}
+                {% if city|trim %}<p>{{ city }}</p>{% endif %}
+                {% if config('store_country') %}
+                    {% for country in loop('credit-note.store-country', 'country', {visible: '*', id: config('store_country')}) %}<p>{{ country.TITLE }}</p>{% endfor %}
+                {% endif %}
+                {% for identifier in legal_identifiers %}<p>{{ identifier }}</p>{% endfor %}
+                {% if config('store_phone') %}<p>{{ 'Phone: '|trans({}, 'pdf', document_locale) }}{{ config('store_phone') }}</p>{% endif %}
+                {% if config('store_email') %}<p>{{ 'Email: '|trans({}, 'pdf', document_locale) }}{{ config('store_email') }}</p>{% endif %}
+            {% endif %}
+        </td>
+    </tr>
+</table>
+
+{{ hook('credit-note.after-information', {credit_note: credit_note_id}) }}
+
+<table class="table-address">
+    <col style="width: 50%; padding: 3mm;" />
+    <col style="padding: 3mm;" />
+    <tr>
+        <td style="border-left: solid 1mm #f6993c;">
+            <h3>{{ 'Invoice address'|trans({}, 'pdf', document_locale) }}</h3>
+            {# The credit note carries its own copy of the invoice address, frozen when it was
+               issued: the `credit-note-address` loop of the module prints it. A module that does
+               not name the address falls back to the invoice address of the order. #}
+            {% set address_printed = false %}
+            {% if note.INVOICE_ADDRESS_ID is defined and note.INVOICE_ADDRESS_ID %}
+                {% for address in loop('credit-note.address', 'credit-note-address', {id: note.INVOICE_ADDRESS_ID}) %}
+                    {% set address_printed = true %}
+                    {% if address.COMPANY %}<p>{{ address.COMPANY }}</p>{% endif %}
+                    <p>{% if address.TITLE %}{% for title in loop('credit-note.address-title', 'title', {id: address.TITLE}) %}{{ title.SHORT }} {% endfor %}{% endif %}{{ address.FIRSTNAME }} {{ address.LASTNAME }}</p>
+                    {% for line in [address.ADDRESS1, address.ADDRESS2, address.ADDRESS3] %}
+                        {% if line|trim %}<p>{{ line }}</p>{% endif %}
+                    {% endfor %}
+                    <p>{{ address.ZIPCODE }} {{ address.CITY }}</p>
+                    {% if address.COUNTRY %}{% for country in loop('credit-note.address-country', 'country', {id: address.COUNTRY, visible: '*'}) %}<p>{{ country.TITLE }}</p>{% endfor %}{% endif %}
+                {% endfor %}
+            {% endif %}
+            {% if not address_printed and note.ORDER_ID %}
+                {% for order in loop('credit-note.order-address', 'order', {id: note.ORDER_ID, customer: '*'}) %}
+                    {{ format_address(order.INVOICE_ADDRESS, document_locale)|raw }}
+                {% endfor %}
+            {% endif %}
+        </td>
+        <td></td>
+    </tr>
+</table>
+
+{{ hook('credit-note.after-addresses', {credit_note: credit_note_id}) }}
+
+{# Every line carries its unit price without and with tax; the tax rate of the line is what
+   separates the two. The lines are gathered by rate for the summary: `tax_rows` is declared
+   before the loop so that the merges done inside it survive the loop. #}
+{% set tax_rows = {} %}
+{% set lines_total_without_tax = 0 %}
+
+<table width="100%" cellspacing="0" cellpadding="0" style="padding-top: 5mm; padding-bottom: 8mm">
+    <col style="width: 46%; padding: 1mm;" />
+    <col style="width: 11%; padding: 1mm;" />
+    <col style="width: 9%; padding: 1mm;" />
+    <col style="width: 11%; padding: 1mm;" />
+    <col style="width: 8%; padding: 1mm;" />
+    <col style="width: 15%; padding: 1mm;" />
+
+    <tr class="table-1">
+        <td><h4>{{ 'Product'|trans({}, 'pdf', document_locale) }}</h4></td>
+        <td><h4 class="align-center">{{ 'Unit. price'|trans({}, 'pdf', document_locale) }}</h4></td>
+        <td><h4 class="align-center">{{ 'Tax rate'|trans({}, 'pdf', document_locale) }}</h4></td>
+        <td><h4 class="align-center">{{ 'Unit taxed price'|trans({}, 'pdf', document_locale) }}</h4></td>
+        <td><h4 class="align-center">{{ 'Quantity'|trans({}, 'pdf', document_locale) }}</h4></td>
+        <td style="background:#f6993c"><h4 style="color:white;" class="align-center">{{ 'Total with tax'|trans({}, 'pdf', document_locale) }}</h4></td>
+    </tr>
+    {% for detail in loop('credit-note.details', 'credit-note-detail', {credit_note_id: credit_note_id}) %}
+        {% set unit_tax = detail.PRICE_WITH_TAX - detail.PRICE %}
+        {# A fee the merchant deducts is a negative line: its rate is the same ratio, read on the
+           signed prices. Only a line without price has no rate. #}
+        {% set tax_rate = detail.PRICE != 0 ? (unit_tax / detail.PRICE * 100)|round(2) : 0 %}
+        {% set rate_key = 'rate-' ~ tax_rate %}
+        {% set tax_row = tax_rows[rate_key]|default({rate: tax_rate, base: 0, amount: 0}) %}
+        {% set tax_rows = tax_rows|merge({(rate_key): {
+            rate: tax_rate,
+            base: tax_row.base + detail.PRICE * detail.QUANTITY,
+            amount: tax_row.amount + unit_tax * detail.QUANTITY,
+        }}) %}
+        {% set lines_total_without_tax = lines_total_without_tax + detail.PRICE * detail.QUANTITY %}
+        <tr class="table-2">
+            <td>
+                <p class="product-title">{{ detail.TITLE }}</p>
+                {% if detail.ORDER_PRODUCT_ID and note.ORDER_ID %}
+                    {% for product in loop('credit-note.order-product', 'order_product', {id: detail.ORDER_PRODUCT_ID, order: note.ORDER_ID}) %}
+                    <p class="product-meta">{{ 'Ref'|trans({}, 'pdf', document_locale) }} {{ product.REF }}{% if product.PRODUCT_SALE_ELEMENTS_REF != product.REF %} / {{ product.PRODUCT_SALE_ELEMENTS_REF }}{% endif %}
+                    {%- for combination in loop('credit-note.combinations', 'order_product_attribute_combination', {order_product: product.ID}) %} · {{ combination.ATTRIBUTE_TITLE }} : {{ combination.ATTRIBUTE_AVAILABILITY_TITLE }}{% endfor %}</p>
+                    {% endfor %}
+                {% endif %}
+
+                {{ hook('credit-note.detail', {credit_note: credit_note_id, credit_note_detail: detail.ID, order_product: detail.ORDER_PRODUCT_ID}) }}
+            </td>
+            <td><p class="align-right">{{ format_money(detail.PRICE, currency) }}</p></td>
+            <td><p class="align-right">{{ tax_rate }} %</p></td>
+            <td><p class="align-right">{{ format_money(detail.PRICE_WITH_TAX, currency) }}</p></td>
+            <td><p class="align-center">{{ detail.QUANTITY }}</p></td>
+            <td><p class="align-right">{{ format_money(detail.PRICE_WITH_TAX * detail.QUANTITY, currency) }}</p></td>
+        </tr>
+
+        {{ hook('credit-note.after-detail', {credit_note: credit_note_id, credit_note_detail: detail.ID}) }}
+    {% endfor %}
+</table>
+
+{{ hook('credit-note.after-products', {credit_note: credit_note_id}) }}
+
+<table cellspacing="0" cellpadding="0" style="padding-top: 5mm; padding-bottom: 8mm">
+    <col style="width: 60%; padding: 1mm;" />
+    <col style="width: 40%; padding: 1mm;" />
+    <tr>
+        <td class="table-3-notice">
+            {{ hook('credit-note.notice', {credit_note: credit_note_id}) }}
+        </td>
+        <td>
+            <table class="table-3">
+                <col style="width: 50%; padding: 0 1mm 1mm;">
+                <col style="width: 50%; padding: 0 1mm 1mm;">
+
+                <tr>
+                    <td class="table-3-1"><p>{{ 'Total without tax'|trans({}, 'pdf', document_locale) }}</p></td>
+                    <td class="table-3-1 align-right"><p>{{ format_money(lines_total_without_tax, currency) }}</p></td>
+                </tr>
+
+                {# One row per tax rate met on the lines, the base and the amount of the rate. #}
+                {% for tax_row in tax_rows|sort((a, b) => a.rate <=> b.rate) %}
+                <tr>
+                    <td class="table-3-1"><p>{{ 'Tax %rate%'|trans({'%rate%': tax_row.rate ~ ' %'}, 'pdf', document_locale) }} <span>({{ format_money(tax_row.base, currency) }})</span></p></td>
+                    <td class="table-3-1 align-right"><p>{{ format_money(tax_row.amount, currency) }}</p></td>
+                </tr>
+                {% endfor %}
+
+                {% if note.DISCOUNT_WITH_TAX > 0 %}
+                <tr>
+                    <td class="table-3-1"><p>{{ 'Discount without tax'|trans({}, 'pdf', document_locale) }}</p></td>
+                    <td class="table-3-1 align-right"><p>- {{ format_money(note.DISCOUNT_WITHOUT_TAX, currency) }}</p></td>
+                </tr>
+                <tr>
+                    <td class="table-3-1"><p>{{ 'Discount with tax'|trans({}, 'pdf', document_locale) }}</p></td>
+                    <td class="table-3-1 align-right"><p>- {{ format_money(note.DISCOUNT_WITH_TAX, currency) }}</p></td>
+                </tr>
+                {% endif %}
+
+                {# The totals below are the ones the module stored on the credit note: they are what
+                   the merchant accepted, discount included. #}
+                <tr>
+                    <td class="table-3-1"><p>{{ 'Total tax amount'|trans({}, 'pdf', document_locale) }}</p></td>
+                    <td class="table-3-1 align-right"><p>{{ format_money(note.TOTAL_PRICE_WITH_TAX - note.TOTAL_PRICE, currency) }}</p></td>
+                </tr>
+                <tr>
+                    <td class="table-3-1" style="background:#f6993c;">
+                        <h3 style="color:white;">{{ 'Total with tax'|trans({}, 'pdf', document_locale) }}</h3>
+                    </td>
+                    <td class="table-3-1 align-right" style="background:#f6993c;">
+                        <h3 style="color:white;">{{ format_money(note.TOTAL_PRICE_WITH_TAX, currency) }}</h3>
+                    </td>
+                </tr>
+            </table>
+        </td>
+    </tr>
+</table>
+
+{{ hook('credit-note.after-summary', {credit_note: credit_note_id}) }}
+
+{% endfor %}

@@ -64,4 +64,11 @@ return [
     'Total refundable amount' => 'Total reembolsable',
     'Total tax amount' => 'Total impuestos',
     'VAT number' => 'Número de IVA',
+    'CREDIT NOTE' => 'NOTA DE CRÉDITO',
+    'Credit note REF' => 'REF de nota de crédito',
+    'Credit note date' => 'Fecha de la nota de crédito',
+    'Credit note type' => 'Tipo de nota de crédito',
+    'Original invoice REF' => 'REF de la factura original',
+    'Tax %rate%' => 'IVA %rate%',
+    'Discount without tax' => 'Descuento sin impuestos',
 ];

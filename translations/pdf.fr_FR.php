@@ -67,4 +67,11 @@ return [
     'Return status' => 'État du retour',
     'Slip this document into the parcel and send it back to the address above.' => 'Glissez ce document dans le colis et renvoyez-le à l\'adresse ci-dessus.',
     'Total refundable amount' => 'Total remboursable',
+    'CREDIT NOTE' => 'AVOIR',
+    'Credit note REF' => 'Numéro d\'avoir',
+    'Credit note date' => 'Date de l\'avoir',
+    'Credit note type' => 'Type d\'avoir',
+    'Original invoice REF' => 'Facture d\'origine',
+    'Tax %rate%' => 'TVA %rate%',
+    'Discount without tax' => 'Remise HT',
 ];

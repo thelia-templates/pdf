@@ -60,4 +60,11 @@ return [
     'VAT number' => 'Partita IVA',
     'page' => 'pagina',
     'product' => 'prodotto',
+    'CREDIT NOTE' => 'NOTA DI CREDITO',
+    'Credit note REF' => 'Numero nota di credito',
+    'Credit note date' => 'Data nota di credito',
+    'Credit note type' => 'Tipo di nota di credito',
+    'Original invoice REF' => 'Numero fattura originale',
+    'Tax %rate%' => 'IVA %rate%',
+    'Discount without tax' => 'Sconto imponibile',
 ];
