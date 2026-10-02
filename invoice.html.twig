@@ -234,6 +234,16 @@
                 <p class="product-title">{{ product.TITLE }}</p>
                 <p class="product-meta">{{ 'Ref'|trans({}, 'pdf', document_locale) }} {{ product.REF }}{% if product.PRODUCT_SALE_ELEMENTS_REF != product.REF %} / {{ product.PRODUCT_SALE_ELEMENTS_REF }}{% endif %}
                 {%- for combination in loop('combinations', 'order_product_attribute_combination', {order_product: product.ID}) %} · {{ combination.ATTRIBUTE_TITLE }} : {{ combination.ATTRIBUTE_AVAILABILITY_TITLE }}{% endfor %}</p>
+                {#- The codes as they were when the order was placed, frozen on the order line. MPN is only read by a core that freezes it. #}
+                {%- set gtin = product.EAN_CODE|default('') %}
+                {%- set mpn = product.MPN|default('') %}
+                {%- if gtin is not empty or mpn is not empty %}
+                <p class="product-meta">
+                    {%- if gtin is not empty %}{{ 'GTIN'|trans({}, 'pdf', document_locale) }} {{ gtin }}{% endif %}
+                    {%- if gtin is not empty and mpn is not empty %} · {% endif %}
+                    {%- if mpn is not empty %}{{ 'Manufacturer ref.'|trans({}, 'pdf', document_locale) }} {{ mpn }}{% endif -%}
+                </p>
+                {%- endif %}
 
                 {{ hook('invoice.product-list', {order_product: product.ID, order: order_id}) }}
             </td>

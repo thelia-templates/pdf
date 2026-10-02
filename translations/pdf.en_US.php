@@ -75,4 +75,6 @@ return [
     'Tax %rate%' => 'Tax %rate%',
     'Discount without tax' => 'Discount without tax',
     'Total tax amount' => 'Total tax amount',
+    'GTIN' => 'GTIN',
+    'Manufacturer ref.' => 'Manufacturer ref.',
 ];
