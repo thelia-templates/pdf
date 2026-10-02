@@ -77,4 +77,6 @@ return [
     'Original invoice REF' => 'Facture d\'origine',
     'Tax %rate%' => 'TVA %rate%',
     'Discount without tax' => 'Remise HT',
+    'GTIN' => 'GTIN',
+    'Manufacturer ref.' => 'Réf. fabricant',
 ];
