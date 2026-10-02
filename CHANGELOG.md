@@ -4,6 +4,12 @@ All notable changes to this template are documented here.
 
 The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and the template adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [Unreleased]
+
+### Added
+- The invoice prints, under the reference of each line, the GTIN and the manufacturer part number of the item as they were when the order was placed. Nothing is printed for a line that has neither. The part number needs a core that freezes it on the order line; with an older core the GTIN alone is printed.
+- English and French labels of the two codes.
+
 ## [1.2.0] 2026-09-22
 
 The credit note becomes the fourth document of the template.

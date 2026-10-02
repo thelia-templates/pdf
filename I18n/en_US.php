@@ -45,4 +45,6 @@ return [
     'Tax rate' => 'Tax rate',
     'Postage tax amount' => 'Postage tax amount',
     'Postage with tax' => 'Postage incl. tax',
+    'GTIN' => 'GTIN',
+    'Manufacturer ref.' => 'Manufacturer ref.',
 ];
