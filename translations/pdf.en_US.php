@@ -77,4 +77,6 @@ return [
     'Total tax amount' => 'Total tax amount',
     'GTIN' => 'GTIN',
     'Manufacturer ref.' => 'Manufacturer ref.',
+    'Requested delivery' => 'Requested delivery',
+    'from %start% to %end%' => 'from %start% to %end%',
 ];

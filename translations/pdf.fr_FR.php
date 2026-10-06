@@ -79,4 +79,6 @@ return [
     'Discount without tax' => 'Remise HT',
     'GTIN' => 'GTIN',
     'Manufacturer ref.' => 'Réf. fabricant',
+    'Requested delivery' => 'Livraison souhaitée',
+    'from %start% to %end%' => 'de %start% à %end%',
 ];
