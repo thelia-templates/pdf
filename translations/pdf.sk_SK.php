@@ -13,6 +13,7 @@
 return [
     'APE code: ' => 'APE code: ',
     'Customer Number' => 'Zákaznícke číslo',
+    'Customer VAT: ' => 'IČ DPH zákazníka: ',
     'DELIVERY' => 'DODANIE',
     'Delivery address' => 'Adresa doručenia',
     'EORI: ' => 'EORI: ',
@@ -24,6 +25,7 @@ return [
     'Phone: ' => 'Telefón: ',
     'Quantity' => 'Množstvo',
     'Ref' => 'Kód',
+    'Reverse charge: VAT due by the customer' => 'Prenesenie daňovej povinnosti: DPH odvedie zákazník',
     'SIRET: ' => 'SIRET: ',
     'Tax' => 'Daň',
     'Total' => 'Celkom',

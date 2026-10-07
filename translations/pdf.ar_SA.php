@@ -12,6 +12,7 @@
 
 return [
     'APE code: ' => 'APE code: ',
+    'Customer VAT: ' => 'الرقم الضريبي للعميل: ',
     'DELIVERY' => 'التوصيل',
     'Delivery address' => 'عنوان التوصيل',
     'Delivery module' => 'طريقة التوصيل',
@@ -23,6 +24,7 @@ return [
     'Postage' => 'الارسالية',
     'Quantity' => 'الكمية',
     'Ref' => 'المرجع',
+    'Reverse charge: VAT due by the customer' => 'الاحتساب العكسي: ضريبة القيمة المضافة مستحقة على العميل',
     'SIRET: ' => 'SIRET: ',
     'Total' => 'الإجمالي',
     'Total with tax' => 'الإجمالي مع الضريبة',

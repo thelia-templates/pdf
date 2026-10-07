@@ -13,6 +13,7 @@
 return [
     'APE code: ' => 'APE code: ',
     'Customer Number' => 'Número do cliente',
+    'Customer VAT: ' => 'IVA do cliente: ',
     'DELIVERY' => 'ENTREGA',
     'Delivery address' => 'Endereço de entrega',
     'EORI: ' => 'EORI: ',
@@ -24,6 +25,7 @@ return [
     'Phone: ' => 'Telefone',
     'Quantity' => 'Quantidade',
     'Ref' => 'Ref',
+    'Reverse charge: VAT due by the customer' => 'Autoliquidação: IVA devido pelo cliente',
     'SIRET: ' => 'SIRET: ',
     'Total' => 'Total',
     'Total with tax' => 'Preço Final c/ impostos',

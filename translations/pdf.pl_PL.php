@@ -13,6 +13,7 @@
 return [
     'APE code: ' => 'APE code: ',
     'Customer Number' => 'Numer klienta',
+    'Customer VAT: ' => 'NIP UE klienta: ',
     'DELIVERY' => 'DOSTAWA',
     'Delivery address' => 'Adres dostawy',
     'EORI: ' => 'EORI: ',
@@ -22,6 +23,7 @@ return [
     'Invoice REF' => 'Numer faktury',
     'Invoice address' => 'Adres rozliczeniowy (do faktury)',
     'Phone: ' => 'Telefon: ',
+    'Reverse charge: VAT due by the customer' => 'Odwrotne obciążenie: VAT rozlicza nabywca',
     'SIRET: ' => 'SIRET: ',
     'Total with tax' => 'Suma brutto',
     'Total without tax' => 'Suma netto',

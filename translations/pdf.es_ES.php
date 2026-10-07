@@ -13,6 +13,7 @@
 return [
     'APE code: ' => 'APE code: ',
     'Customer Number' => 'Número de cliente',
+    'Customer VAT: ' => 'NIF-IVA del cliente: ',
     'DELIVERY' => 'ENTREGA',
     'Delivery address' => 'Dirección de entrega',
     'Delivery module' => 'Módulo de entrega',
@@ -30,6 +31,7 @@ return [
     'Product' => 'Producto',
     'Quantity' => 'Cantidad',
     'Ref' => 'Ref',
+    'Reverse charge: VAT due by the customer' => 'Inversión del sujeto pasivo: IVA a cargo del cliente',
     'SIRET: ' => 'SIRET: ',
     'Tax' => 'Impuestos',
     'Taxed total' => 'Total impuesto',

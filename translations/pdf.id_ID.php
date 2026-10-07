@@ -12,6 +12,7 @@
 
 return [
     'APE code: ' => 'APE code: ',
+    'Customer VAT: ' => 'PPN pelanggan: ',
     'DELIVERY' => 'PENGIRIMAN',
     'EORI: ' => 'EORI: ',
     'Email: ' => 'E-mail: ',
@@ -21,6 +22,7 @@ return [
     'Invoice address' => 'Alamat untuk faktur',
     'Phone: ' => 'Telepon: ',
     'Ref' => 'Ref',
+    'Reverse charge: VAT due by the customer' => 'Pembalikan beban pajak: PPN ditanggung pelanggan',
     'SIRET: ' => 'SIRET: ',
     'Total with tax' => 'Total termasuk pajak',
     'Total without tax' => 'Total tanpa pajak',

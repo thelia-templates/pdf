@@ -12,8 +12,10 @@
 
 return [
     'APE code: ' => 'APE code: ',
+    'Customer VAT: ' => 'BTW-nummer van de klant: ',
     'EORI: ' => 'EORI: ',
     'Exempt from registration with the trade and companies register (RCS) and the trade register (RM)' => 'Exempt from registration with the trade and companies register (RCS) and the trade register (RM)',
+    'Reverse charge: VAT due by the customer' => 'BTW verlegd: BTW verschuldigd door de klant',
     'SIRET: ' => 'SIRET: ',
     'VAT not applicable, article 293 B of the French tax code' => 'VAT not applicable, article 293 B of the French tax code',
     'VAT: ' => 'VAT: ',

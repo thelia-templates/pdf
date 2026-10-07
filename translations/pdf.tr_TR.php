@@ -13,6 +13,7 @@
 return [
     'APE code: ' => 'APE code: ',
     'Customer Number' => 'Müşteri numarası',
+    'Customer VAT: ' => 'Müşteri KDV numarası: ',
     'DELIVERY' => 'TESLİMAT',
     'Delivery address' => 'Teslimat adresi',
     'Delivery module' => 'Teslimat modülü',
@@ -30,6 +31,7 @@ return [
     'Product' => 'ürün',
     'Quantity' => 'Adet',
     'Ref' => 'Referans',
+    'Reverse charge: VAT due by the customer' => 'Ters ödeme: KDV alıcı tarafından ödenir',
     'SIRET: ' => 'SIRET: ',
     'Tax' => 'Kdv',
     'Taxed total' => 'Genel Toplam [Kdv dahil]',

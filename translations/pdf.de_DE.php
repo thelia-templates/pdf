@@ -13,6 +13,7 @@
 return [
     'APE code: ' => 'APE code: ',
     'Customer Number' => 'Kundennummer',
+    'Customer VAT: ' => 'USt-IdNr. des Kunden: ',
     'DELIVERY' => 'LIEFERUNG',
     'Delivery address' => 'Lieferadresse',
     'Delivery module' => 'Liefermodul',
@@ -30,6 +31,7 @@ return [
     'Product' => 'Produkt',
     'Quantity' => 'Menge',
     'Ref' => 'REF',
+    'Reverse charge: VAT due by the customer' => 'Steuerschuldnerschaft des Leistungsempfängers',
     'SIRET: ' => 'SIRET: ',
     'Tax' => 'Taxe',
     'Taxed total' => 'Gesamtsumme',
