@@ -12,6 +12,7 @@
 
 return [
     'APE code: ' => 'APE code: ',
+    'Customer VAT: ' => 'Partita IVA del cliente: ',
     'Delivery address' => 'Indirizzo di consegna',
     'Delivery module' => 'Modulo di consegna',
     'Discount' => 'Sconto',
@@ -22,6 +23,7 @@ return [
     'Postage' => 'Spese di spedizione',
     'Product' => 'Prodotto',
     'Quantity' => 'Quantità',
+    'Reverse charge: VAT due by the customer' => 'Inversione contabile: IVA dovuta dal cliente',
     'SIRET: ' => 'SIRET: ',
     'Tax' => 'Tassa',
     'Taxed total' => 'Totale tassato',

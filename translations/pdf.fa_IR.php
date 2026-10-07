@@ -13,6 +13,7 @@
 return [
     'APE code: ' => 'APE code: ',
     'Customer Number' => 'شماره مشتری',
+    'Customer VAT: ' => 'شناسه مالیاتی مشتری: ',
     'DELIVERY' => 'تحویل',
     'Delivery address' => 'آدرس تحویل',
     'Delivery module' => 'ماژول تحویل',
@@ -30,6 +31,7 @@ return [
     'Product' => 'محصول',
     'Quantity' => 'تعداد',
     'Ref' => 'شماره',
+    'Reverse charge: VAT due by the customer' => 'معکوس‌سازی مالیات: مالیات بر ارزش افزوده بر عهده مشتری',
     'SIRET: ' => 'SIRET: ',
     'Tax' => 'مالیات',
     'Taxed total' => 'مجموع (با مالیات)',

@@ -13,6 +13,7 @@
 return [
     'APE code: ' => 'APE code: ',
     'Customer Number' => 'Номер клиента',
+    'Customer VAT: ' => 'Номер НДС клиента: ',
     'DELIVERY' => 'ДОСТАВКА',
     'Delivery address' => 'Адрес доставки',
     'Delivery module' => 'Модуль доставки',
@@ -30,6 +31,7 @@ return [
     'Product' => 'Товар',
     'Quantity' => 'Количество',
     'Ref' => 'Номер',
+    'Reverse charge: VAT due by the customer' => 'Обратное налогообложение: НДС уплачивает покупатель',
     'SIRET: ' => 'SIRET: ',
     'Tax' => 'Налог',
     'Taxed total' => 'Цена с налогом',

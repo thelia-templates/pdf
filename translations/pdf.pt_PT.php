@@ -12,6 +12,7 @@
 
 return [
     'APE code: ' => 'APE code: ',
+    'Customer VAT: ' => 'NIF-IVA do cliente: ',
     'DELIVERY' => 'ENTREGA',
     'EORI: ' => 'EORI: ',
     'Email: ' => 'Email: ',
@@ -21,6 +22,7 @@ return [
     'Invoice address' => 'Morada de facturação',
     'Phone: ' => 'Telefone: ',
     'Ref' => 'Ref',
+    'Reverse charge: VAT due by the customer' => 'Autoliquidação: IVA devido pelo adquirente',
     'SIRET: ' => 'SIRET: ',
     'Total with tax' => 'Total (com IVA)',
     'Total without tax' => 'Total (sem IVA)',

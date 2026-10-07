@@ -12,6 +12,7 @@
 
 return [
     'APE code: ' => 'APE code: ',
+    'Customer VAT: ' => 'ΑΦΜ πελάτη: ',
     'DELIVERY' => 'ΠΑΡΑΔΟΣΗ',
     'Delivery address' => 'Διεύθυνση παράδοσης',
     'EORI: ' => 'EORI: ',
@@ -20,6 +21,7 @@ return [
     'Invoice REF' => 'Αναφ Τιμολογίου',
     'Quantity' => 'Ποσότητα',
     'Ref' => 'Αναφ',
+    'Reverse charge: VAT due by the customer' => 'Αντιστροφή επιβάρυνσης: ο ΦΠΑ οφείλεται από τον πελάτη',
     'SIRET: ' => 'SIRET: ',
     'Total' => 'Σύνολο',
     'Total with tax' => 'Σύνολο με ΦΠΑ',

@@ -13,6 +13,7 @@
 return [
     'APE code: ' => 'APE code: ',
     'Customer Number' => 'Ügyfélszám',
+    'Customer VAT: ' => 'A vevő adószáma: ',
     'Delivery address' => 'Szállítáci cím',
     'Delivery module' => 'Szállítási modul',
     'Discount' => 'Kedvezmény',
@@ -23,6 +24,7 @@ return [
     'Postage' => 'Szállítási költség',
     'Product' => 'Termék',
     'Quantity' => 'Mennyiség',
+    'Reverse charge: VAT due by the customer' => 'Fordított adózás: az áfát a vevő fizeti',
     'SIRET: ' => 'SIRET: ',
     'Tax' => 'Adó',
     'Taxed total' => 'Összesen (Bruttó)',
