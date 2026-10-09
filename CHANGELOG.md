@@ -10,6 +10,13 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and
 - The invoice prints, under the reference of each line, the GTIN and the manufacturer part number of the item as they were when the order was placed. Nothing is printed for a line that has neither. The part number needs a core that freezes it on the order line; with an older core the GTIN alone is printed.
 - English and French labels of the two codes.
 
+### Changed
+- The invoice prints the legal invoice number the core allocates when the order is paid (`order.invoice_ref`) instead of `FA` followed by the order reference. The credit note quotes the same number as the original invoice, and now quotes one for an order that has none allocated.
+- An order that has no invoice date yet (not paid, or cancelled before payment) prints no invoice number, instead of a number that would change at payment.
+- An order that has an invoice date but no `invoice_ref` keeps printing `FA` followed by the order reference. That is the case of every order of a shop that never switched on `invoice_ref_auto`.
+
+**Before updating a shop that already issued invoices.** Re-downloading a PDF renders it again, so an order paid while the core was already allocating numbers would swap the `FA…` it was invoiced under for its `invoice_ref`. Set the configuration variable `pdf_invoice_ref_from` to a date (`YYYY-MM-DD`): an order invoiced before that date keeps printing `FA…`, an order invoiced on or after it prints its `invoice_ref`. Without the variable, every order that has an `invoice_ref` prints it.
+
 ## [1.2.0] 2026-09-22
 
 The credit note becomes the fourth document of the template.
