@@ -290,10 +290,11 @@
                 {% set untaxedPostage = order.POSTAGE_UNTAXED %}
                 {% set postageTax = order.POSTAGE_TAX %}
                 {% set tva = untaxedPostage > 0 ? postageTax / untaxedPostage : 0 %}
-                {# The amounts are stored in whole cents, so the ratio drifts from the rate of the rule (0.83 / 4.17 is 19.9 %): a rate within a fifth of a point of a half point is that half point. #}
+                {# The amounts are stored in whole cents, so the ratio drifts from the rate of the rule (0.83 / 4.17 is 19.9 %): the nearest half point is that rate only when it gives back the stored tax, otherwise a rate such as 2.1 % would be printed as 2 %. #}
                 {% set postageRate = tva * 100 %}
                 {% set nearestHalfPoint = ((postageRate * 2)|round(0)) / 2 %}
-                {% set postageRate = (postageRate - nearestHalfPoint)|abs <= 0.15 ? nearestHalfPoint : postageRate|round(2) %}
+                {% set halfPointGivesTheStoredTax = ((untaxedPostage * nearestHalfPoint / 100)|round(2) - postageTax)|abs < 0.005 %}
+                {% set postageRate = halfPointGivesTheStoredTax ? nearestHalfPoint : postageRate|round(2) %}
                 {% set untaxedTotalWithUntaxedPostage = order.TOTAL_ITEMS_AMOUNT + order.POSTAGE_UNTAXED %}
 
                 {# Postage totals: without tax / tax rate / with tax #}
