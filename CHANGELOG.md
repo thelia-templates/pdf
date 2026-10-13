@@ -4,6 +4,13 @@ All notable changes to this template are documented here.
 
 The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and the template adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [Unreleased]
+
+The delivery note can print one shipment of an order. Needs a Thelia core that knows shipments.
+
+### Added
+- `delivery.html.twig` accepts a `shipment_id` variable. When it is given, the note lists only the lines that shipment carries, with the quantity it carries, and prints the shipment reference and its tracking number under the order reference. Without it, the note prints the whole order as before.
+
 ## [1.3.0] 2026-10-11
 
 The invoice prints the legal invoice number. Works with Thelia core 3.2.
