@@ -69,4 +69,6 @@ return [
     'Original invoice REF' => 'Numero fattura originale',
     'Tax %rate%' => 'IVA %rate%',
     'Discount without tax' => 'Sconto imponibile',
+    'Shipment' => 'Spedizione',
+    'Tracking number' => 'Numero di tracciamento',
 ];

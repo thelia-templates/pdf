@@ -57,6 +57,10 @@
 {{ hook('delivery.css') }}
 </style>
 
+{# A delivery note prints the whole order, or only the parcel of one shipment when the
+   caller names it: an order shipped in several goes has one note per parcel. #}
+{% set shipment_id = shipment_id|default(null) %}
+
 {# The language of this document is the one the order was placed in, not the one of
    whoever prints it: the customer is the one who keeps it. `locale` cannot say it — the
    Twig engine replaces whatever the caller passed with the language of the current
@@ -141,6 +145,18 @@
                     <tr>
                         <td><h3>{{ 'Order REF'|trans({}, 'pdf', document_locale) }} : <span>{{ order.REF }}</span></h3></td>
                     </tr>
+                    {% if shipment_id %}
+                    {% for shipment in loop('delivery.shipment', 'order_shipment', {id: shipment_id, order: order.ID}) %}
+                    <tr>
+                        <td><h3>{{ 'Shipment'|trans({}, 'pdf', document_locale) }} : <span>{{ shipment.REF }}</span></h3></td>
+                    </tr>
+                    {% if shipment.DELIVERY_REF %}
+                    <tr>
+                        <td><h3>{{ 'Tracking number'|trans({}, 'pdf', document_locale) }} : <span>{{ shipment.DELIVERY_REF }}</span></h3></td>
+                    </tr>
+                    {% endif %}
+                    {% endfor %}
+                    {% endif %}
                     <tr>
                         <td><h3>{{ 'Customer Number'|trans({}, 'pdf', document_locale) }} : <span>{% for customer in loop('customer.invoice', 'customer', {id: order.CUSTOMER, current: 0}) %}{{ customer.REF }}{% endfor %}</span></h3></td>
                     </tr>
@@ -211,7 +227,7 @@
                 <h3 style="color:white; text-align:center;">{{ 'Quantity'|trans({}, 'pdf', document_locale) }}</h3>
             </td>
         </tr>
-        {% for product in loop('order-products', 'order_product', {order: order.ID}) %}
+        {% for product in loop('order-products', 'order_product', shipment_id ? {order: order.ID, shipment: shipment_id} : {order: order.ID}) %}
         <tr>
             <td>
                 <p>{{ product.REF }}{% if product.REF != product.PRODUCT_SALE_ELEMENTS_REF %} / {{ product.PRODUCT_SALE_ELEMENTS_REF }}{% endif %}</p>

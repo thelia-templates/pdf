@@ -80,5 +80,7 @@ return [
     'GTIN' => 'GTIN',
     'Manufacturer ref.' => 'Réf. fabricant',
     'Requested delivery' => 'Livraison souhaitée',
+    'Shipment' => 'Expédition',
+    'Tracking number' => 'Numéro de suivi',
     'from %start% to %end%' => 'de %start% à %end%',
 ];

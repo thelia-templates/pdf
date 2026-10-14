@@ -78,5 +78,7 @@ return [
     'GTIN' => 'GTIN',
     'Manufacturer ref.' => 'Manufacturer ref.',
     'Requested delivery' => 'Requested delivery',
+    'Shipment' => 'Shipment',
+    'Tracking number' => 'Tracking number',
     'from %start% to %end%' => 'from %start% to %end%',
 ];
