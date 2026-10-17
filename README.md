@@ -17,7 +17,7 @@ Translations live in `translations/`, under the `pdf` domain.
 ## Compatibility
 
 - Thelia 3.1 or later (`thelia/core` ^3.1), TwigEngine 1.0.9 or later
-- PHP 8.3+
+- PHP 8.3 or later
 - The credit note document needs the CreditNote module, Thelia 3 line
 
 ## Layout
