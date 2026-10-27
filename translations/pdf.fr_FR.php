@@ -83,4 +83,5 @@ return [
     'Shipment' => 'Expédition',
     'Tracking number' => 'Numéro de suivi',
     'from %start% to %end%' => 'de %start% à %end%',
+    'Group discount %rate% % already included' => 'Remise de groupe %rate% % déjà incluse',
 ];

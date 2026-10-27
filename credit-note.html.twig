@@ -126,6 +126,11 @@
 <div class="pdf-header">{{ hook('credit-note.header', {credit_note: credit_note_id}) }}</div>
 
 {% for note in loop('credit-note.document', 'credit-note', {id: credit_note_id}) %}
+{# What the order froze about the group of its customer, read in the order loop below and used by the totals. Declared here so that the values survive that loop; `is defined` keeps an older core, whose order loop does not publish them, on the taxed display. #}
+{% set showUntaxed = false %}
+{% set groupDiscountRate = 0 %}
+{# The group discount is on the lines that come from the order: a credit note of free lines does not carry the mention. #}
+{% set hasOrderLines = false %}
 {% set currency = note.CURRENCY_ID %}
 <table class="table-info" style="margin-bottom: 15px;">
     <tr>
@@ -165,6 +170,8 @@
                 {% endif %}
                 {% if note.ORDER_ID %}
                     {% for order in loop('credit-note.order', 'order', {id: note.ORDER_ID, customer: '*'}) %}
+                    {% set showUntaxed = order.CUSTOMER_GROUP_DISPLAY_TAXED_PRICE is defined and not order.CUSTOMER_GROUP_DISPLAY_TAXED_PRICE %}
+                    {% set groupDiscountRate = order.CUSTOMER_GROUP_DISCOUNT_RATE|default(0) %}
                     <tr>
                         <td><h3>{{ 'Order REF'|trans({}, 'pdf', document_locale) }} : <span>{{ order.REF }}</span></h3></td>
                     </tr>
@@ -268,6 +275,7 @@
         <td style="background:#f6993c"><h4 style="color:white;" class="align-center">{{ 'Total with tax'|trans({}, 'pdf', document_locale) }}</h4></td>
     </tr>
     {% for detail in loop('credit-note.details', 'credit-note-detail', {credit_note_id: credit_note_id}) %}
+        {% if detail.ORDER_PRODUCT_ID %}{% set hasOrderLines = true %}{% endif %}
         {% set unit_tax = detail.PRICE_WITH_TAX - detail.PRICE %}
         {# A fee the merchant deducts is a negative line: its rate is the same ratio, read on the
            signed prices. Only a line without price has no rate. #}
@@ -317,10 +325,18 @@
                 <col style="width: 50%; padding: 0 1mm 1mm;">
                 <col style="width: 50%; padding: 0 1mm 1mm;">
 
+                {# Without tax, the bold total is the one stored on the credit note (discount taken off), not the sum of the lines. #}
                 <tr>
-                    <td class="table-3-1"><p>{{ 'Total without tax'|trans({}, 'pdf', document_locale) }}</p></td>
-                    <td class="table-3-1 align-right"><p>{{ format_money(lines_total_without_tax, currency) }}</p></td>
+                    <td class="table-3-1"><p>{% if showUntaxed %}<strong>{{ 'Total without tax'|trans({}, 'pdf', document_locale) }}</strong>{% else %}{{ 'Total without tax'|trans({}, 'pdf', document_locale) }}{% endif %}</p></td>
+                    <td class="table-3-1 align-right"><p>{% if showUntaxed %}<strong>{{ format_money(note.TOTAL_PRICE, currency) }}</strong>{% else %}{{ format_money(lines_total_without_tax, currency) }}{% endif %}</p></td>
                 </tr>
+
+                {# Discount rate of the customer group at the time of the order, already included in the line prices #}
+                {% if hasOrderLines and groupDiscountRate > 0 %}
+                <tr>
+                    <td class="table-3-1" colspan="2"><p>{{ 'Group discount %rate% % already included'|trans({'%rate%': groupDiscountRate|format_number({max_fraction_digit: 2}, 'decimal', 'default', document_locale)}, 'pdf', document_locale) }}</p></td>
+                </tr>
+                {% endif %}
 
                 {# One row per tax rate met on the lines, the base and the amount of the rate. #}
                 {% for tax_row in tax_rows|sort((a, b) => a.rate <=> b.rate) %}

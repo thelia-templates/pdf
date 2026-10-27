@@ -73,4 +73,5 @@ return [
     'Original invoice REF' => 'Ursprüngliche Rechnungsnummer',
     'Tax %rate%' => 'MwSt. %rate%',
     'Discount without tax' => 'Rabatt ohne MwSt.',
+    'Group discount %rate% % already included' => 'Gruppenrabatt %rate% % bereits enthalten',
 ];
