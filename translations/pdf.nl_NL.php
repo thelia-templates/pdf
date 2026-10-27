@@ -68,4 +68,5 @@ return [
     'Tax %rate%' => 'Btw %rate%',
     'Discount without tax' => 'Korting excl. btw',
     'Included in the bundle' => 'Inbegrepen in het pakket',
+    'Group discount %rate% % already included' => 'Groepskorting %rate% % reeds inbegrepen',
 ];

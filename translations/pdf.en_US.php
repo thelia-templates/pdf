@@ -82,4 +82,5 @@ return [
     'Tracking number' => 'Tracking number',
     'from %start% to %end%' => 'from %start% to %end%',
     'Included in the bundle' => 'Included in the bundle',
+    'Group discount %rate% % already included' => 'Group discount %rate% % already included',
 ];

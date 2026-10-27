@@ -76,4 +76,5 @@ return [
     'Shipment' => 'Envío',
     'Tracking number' => 'Número de seguimiento',
     'Included in the bundle' => 'Incluido en el pack',
+    'Group discount %rate% % already included' => 'Descuento de grupo del %rate% % ya incluido',
 ];
