@@ -4,6 +4,13 @@ All notable changes to this template are documented here.
 
 The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and the template adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.4.1] 2026-10-29
+
+Packaging fix of 1.4.0. Needs Thelia core 3.3.
+
+### Fixed
+- The package requires `thelia/core` `^3.3`, and `template.xml` carries the version number. 1.4.0 was published with `^3.2` and the 1.3.0 number.
+
 ## [1.4.0] 2026-10-29
 
 The delivery note can print one shipment of an order. Needs Thelia core 3.3.
