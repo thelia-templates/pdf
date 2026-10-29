@@ -130,6 +130,8 @@
 <div class="pdf-header">{{ hook('invoice.header', {order: order_id}) }}</div>
 
 {% for order in loop('order.invoice', 'order', {id: order_id, customer: '*'}) %}
+{# The group of the customer when the order was placed shows its prices without tax: the figures without tax come out in bold, every legal line stays. `is defined` keeps an older core, whose order loop does not publish the flag, on the taxed display. #}
+{% set showUntaxed = order.CUSTOMER_GROUP_DISPLAY_TAXED_PRICE is defined and not order.CUSTOMER_GROUP_DISPLAY_TAXED_PRICE %}
 {% set currency = order.CURRENCY %}
 <table class="table-info" style="margin-bottom: 15px;">
     <tr>
@@ -256,11 +258,11 @@
 
                 {{ hook('invoice.product-list', {order_product: product.ID, order: order_id}) }}
             </td>
-            <td><p class="align-right">{{ format_money(product.REAL_PRICE, currency) }}</p></td>
+            <td><p class="align-right">{% if showUntaxed %}<strong>{{ format_money(product.REAL_PRICE, currency) }}</strong>{% else %}{{ format_money(product.REAL_PRICE, currency) }}{% endif %}</p></td>
             <td><p class="align-right">{{ format_money(product.REAL_PRICE_TAX, currency) }}</p></td>
             <td><p class="align-right">{{ format_money(product.REAL_TAXED_PRICE, currency) }}</p></td>
             <td><p class="align-center">{{ product.QUANTITY }}</p></td>
-            <td><p class="align-right">{{ format_money(product.REAL_TOTAL_PRICE, currency) }}</p></td>
+            <td><p class="align-right">{% if showUntaxed %}<strong>{{ format_money(product.REAL_TOTAL_PRICE, currency) }}</strong>{% else %}{{ format_money(product.REAL_TOTAL_PRICE, currency) }}{% endif %}</p></td>
         </tr>
 
         {{ hook('invoice.order-product', {order: order_id, order_product: product.ID}) }}
@@ -336,7 +338,14 @@
                 </tr>
                 {% endif %}
 
-                {# Cart + postage totals #}
+                {# Discount rate of the customer group at the time of the order, already included in the product prices above #}
+                {% if order.CUSTOMER_GROUP_DISCOUNT_RATE|default(0) > 0 %}
+                <tr>
+                    <td class="table-3-1" colspan="2"><p>{{ 'Group discount %rate% % already included'|trans({'%rate%': order.CUSTOMER_GROUP_DISCOUNT_RATE|format_number({max_fraction_digit: 2}, 'decimal', 'default', document_locale)}, 'pdf', document_locale) }}</p></td>
+                </tr>
+                {% endif %}
+
+                {# Cart + postage totals. Without tax, the bold total is the core's own figure (goods and postage, discount taken off), not the sum above, which is before the discount. #}
                 {% if hideTax|default(false) %}
                 <tr>
                     <td class="table-3-1"><p>{{ 'Total'|trans({}, 'pdf', document_locale) }}</p></td>
@@ -344,8 +353,8 @@
                 </tr>
                 {% else %}
                 <tr>
-                    <td class="table-3-1"><p>{{ 'Total without tax'|trans({}, 'pdf', document_locale) }}</p></td>
-                    <td class="table-3-1 align-right"><p>{{ format_money(untaxedTotalWithUntaxedPostage, currency) }}</p></td>
+                    <td class="table-3-1"><p>{% if showUntaxed %}<strong>{{ 'Total without tax'|trans({}, 'pdf', document_locale) }}</strong>{% else %}{{ 'Total without tax'|trans({}, 'pdf', document_locale) }}{% endif %}</p></td>
+                    <td class="table-3-1 align-right"><p>{% if showUntaxed %}<strong>{{ format_money(order.TOTAL_AMOUNT, currency) }}</strong>{% else %}{{ format_money(untaxedTotalWithUntaxedPostage, currency) }}{% endif %}</p></td>
                 </tr>
                 <tr>
                     <td class="table-3-1"><p>{{ 'Total tax amount'|trans({}, 'pdf', document_locale) }}</p></td>

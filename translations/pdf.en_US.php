@@ -81,4 +81,5 @@ return [
     'Shipment' => 'Shipment',
     'Tracking number' => 'Tracking number',
     'from %start% to %end%' => 'from %start% to %end%',
+    'Group discount %rate% % already included' => 'Group discount %rate% % already included',
 ];

@@ -75,4 +75,5 @@ return [
     'Discount without tax' => 'Descuento sin impuestos',
     'Shipment' => 'Envío',
     'Tracking number' => 'Número de seguimiento',
+    'Group discount %rate% % already included' => 'Descuento de grupo del %rate% % ya incluido',
 ];

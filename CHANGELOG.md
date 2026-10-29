@@ -10,6 +10,7 @@ The delivery note can print one shipment of an order. Needs Thelia core 3.3.
 
 ### Added
 - `delivery.html.twig` accepts a `shipment_id` variable. When it is given, the note lists only the lines that shipment carries, with the quantity it carries, and prints the shipment reference and its tracking number under the order reference. Without it, the note prints the whole order as before.
+- `invoice.html.twig` and `credit-note.html.twig` print a "Group discount X % already included" line when the order froze a customer group discount, and set the amounts without tax in bold when the group shows its prices without tax. Needs a Thelia core that freezes the customer group on the order; an older core keeps the taxed display.
 
 ## [1.3.0] 2026-10-11
 

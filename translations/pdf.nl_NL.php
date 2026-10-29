@@ -67,4 +67,5 @@ return [
     'Original invoice REF' => 'Oorspronkelijk factuurnummer',
     'Tax %rate%' => 'Btw %rate%',
     'Discount without tax' => 'Korting excl. btw',
+    'Group discount %rate% % already included' => 'Groepskorting %rate% % reeds inbegrepen',
 ];
