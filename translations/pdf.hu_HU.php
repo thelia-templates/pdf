@@ -33,4 +33,5 @@ return [
     'Unit. price' => 'Egységár',
     'VAT not applicable, article 293 B of the French tax code' => 'VAT not applicable, article 293 B of the French tax code',
     'VAT: ' => 'VAT: ',
+    'Included in the bundle' => 'A csomag része',
 ];

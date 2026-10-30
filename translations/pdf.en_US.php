@@ -81,4 +81,5 @@ return [
     'Shipment' => 'Shipment',
     'Tracking number' => 'Tracking number',
     'from %start% to %end%' => 'from %start% to %end%',
+    'Included in the bundle' => 'Included in the bundle',
 ];

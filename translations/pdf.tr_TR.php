@@ -46,4 +46,5 @@ return [
     'invoice.imprint' => 'Fatura Şekli',
     'page' => 'sayfa',
     'product' => 'Ürün',
+    'Included in the bundle' => 'Pakete dahildir',
 ];

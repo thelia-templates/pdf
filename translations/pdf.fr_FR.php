@@ -83,4 +83,5 @@ return [
     'Shipment' => 'Expédition',
     'Tracking number' => 'Numéro de suivi',
     'from %start% to %end%' => 'de %start% à %end%',
+    'Included in the bundle' => 'Inclus dans le pack',
 ];

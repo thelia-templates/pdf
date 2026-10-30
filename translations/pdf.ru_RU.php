@@ -44,4 +44,5 @@ return [
     'VAT: ' => 'VAT: ',
     'page' => 'страница',
     'product' => 'товар',
+    'Included in the bundle' => 'Входит в набор',
 ];

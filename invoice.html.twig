@@ -34,6 +34,7 @@
 
     .product-title { font-size: 9px; }
     .product-meta { font-size: 8px; color: #747475; }
+    .bundle-component-detail { padding-left: 4mm; }
 
     .table-3-1, .table-3-2 { border: solid 1px #bcbdc0; }
     .table-3-1 span { font-size: 8px; color: #747475; }
@@ -237,7 +238,15 @@
         <td><h4 class="align-center">{{ 'Quantity'|trans({}, 'pdf', document_locale) }}</h4></td>
         <td style="background:#f6993c"><h4 style="color:white;" class="align-center">{{ 'Total without tax'|trans({}, 'pdf', document_locale) }}</h4></td>
     </tr>
-    {% for product in loop('order-products', 'order_product', {order: order.ID}) %}
+    {# A bundle is one priced line, followed by its components: they carry neither price nor tax and
+       are matched to their bundle by `PARENT`, so each one is printed under its own bundle whatever
+       the order of the line ids. A component whose `PARENT` is no bundle line of the order is printed
+       flat like a classic line. #}
+    {% set order_lines = loop('order-products', 'order_product', {order: order.ID}) %}
+    {% set bundle_ids = order_lines|filter(line => (line.LINE_TYPE|default('')) == 'bundle')|map(line => line.ID) %}
+    {% set bundle_components = order_lines|filter(line => (line.LINE_TYPE|default('')) == 'bundle_component' and line.PARENT in bundle_ids) %}
+    {% for product in order_lines %}
+        {% if (product.LINE_TYPE|default('')) != 'bundle_component' or product.PARENT not in bundle_ids %}
         <tr class="table-2">
             <td>
                 <p class="product-title">{{ product.TITLE }}</p>
@@ -264,6 +273,29 @@
         </tr>
 
         {{ hook('invoice.order-product', {order: order_id, order_product: product.ID}) }}
+
+        {% if (product.LINE_TYPE|default('')) == 'bundle' %}
+            {% for component in bundle_components|filter(line => line.PARENT == product.ID) %}
+        <tr class="table-2">
+            <td>
+                <p class="product-title bundle-component-detail">{{ component.TITLE }}</p>
+                <p class="product-meta bundle-component-detail">{{ 'Ref'|trans({}, 'pdf', document_locale) }} {{ component.REF }}{% if component.PRODUCT_SALE_ELEMENTS_REF != component.REF %} / {{ component.PRODUCT_SALE_ELEMENTS_REF }}{% endif %}
+                {%- for combination in loop('combinations', 'order_product_attribute_combination', {order_product: component.ID}) %} · {{ combination.ATTRIBUTE_TITLE }} : {{ combination.ATTRIBUTE_AVAILABILITY_TITLE }}{% endfor %}</p>
+                <p class="product-meta bundle-component-detail">{{ 'Included in the bundle'|trans({}, 'pdf', document_locale) }}</p>
+
+                {{ hook('invoice.product-list', {order_product: component.ID, order: order_id}) }}
+            </td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td><p class="align-center">{{ component.QUANTITY }}</p></td>
+            <td></td>
+        </tr>
+
+        {{ hook('invoice.order-product', {order: order_id, order_product: component.ID}) }}
+            {% endfor %}
+        {% endif %}
+        {% endif %}
     {% endfor %}
 </table>
 

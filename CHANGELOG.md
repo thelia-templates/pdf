@@ -4,6 +4,20 @@ All notable changes to this template are documented here.
 
 The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and the template adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [Unreleased]
+
+The invoice and the delivery note show the components of a product bundle. Needs a Thelia core that stores bundles (`LINE_TYPE` and `PARENT` on the `order_product` loop).
+
+### Added
+- The invoice prints the components of a bundle under its line, indented, with their quantity, their title and the mention "Included in the bundle". The bundle line keeps its price and its taxes, the components print no price and no tax, and the totals do not change.
+- The delivery note prints the components of a bundle under its line, indented, with the quantity to pack. The bundle line is a header without quantity. A delivery note of one shipment prints the header of each bundle that has components in the shipment.
+- The label "Included in the bundle" in every language of the template.
+- The hooks of each line (`invoice.product-list`, `invoice.order-product`, `delivery.product-list`, `delivery.order-product`) are called for each component too, with the same parameters as for a classic line, inside the component row.
+
+### Changed
+- A component whose `PARENT` matches no bundle line of the order is printed flat like a classic line, in the order of the order lines.
+- Each component is printed under its own bundle, whatever the order of the line ids, and no longer as a product with a price of 0 in the flat list of the order lines. An order without bundle prints as before.
+
 ## [1.4.1] 2026-10-29
 
 Packaging fix of 1.4.0. Needs Thelia core 3.3.

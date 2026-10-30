@@ -33,4 +33,5 @@ return [
     'VAT: ' => 'VAT: ',
     'page' => 'الصفحة',
     'product' => 'المنتج',
+    'Included in the bundle' => 'مشمول في الحزمة',
 ];

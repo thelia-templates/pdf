@@ -73,4 +73,5 @@ return [
     'Original invoice REF' => 'Ursprüngliche Rechnungsnummer',
     'Tax %rate%' => 'MwSt. %rate%',
     'Discount without tax' => 'Rabatt ohne MwSt.',
+    'Included in the bundle' => 'Im Paket enthalten',
 ];

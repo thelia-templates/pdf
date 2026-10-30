@@ -67,4 +67,5 @@ return [
     'Original invoice REF' => 'Oorspronkelijk factuurnummer',
     'Tax %rate%' => 'Btw %rate%',
     'Discount without tax' => 'Korting excl. btw',
+    'Included in the bundle' => 'Inbegrepen in het pakket',
 ];

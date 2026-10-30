@@ -30,4 +30,5 @@ return [
     'VAT: ' => 'VAT: ',
     'page' => 'σελίδα',
     'product' => 'προϊόν',
+    'Included in the bundle' => 'Περιλαμβάνεται στο πακέτο',
 ];
