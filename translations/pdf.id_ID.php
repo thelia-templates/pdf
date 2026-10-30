@@ -32,4 +32,5 @@ return [
     'invoice.imprint' => 'jejak Faktur',
     'page' => 'halaman',
     'product' => 'produk',
+    'Included in the bundle' => 'Termasuk dalam paket',
 ];

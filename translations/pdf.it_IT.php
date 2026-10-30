@@ -71,4 +71,5 @@ return [
     'Discount without tax' => 'Sconto imponibile',
     'Shipment' => 'Spedizione',
     'Tracking number' => 'Numero di tracciamento',
+    'Included in the bundle' => 'Incluso nel pacchetto',
 ];

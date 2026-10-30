@@ -32,6 +32,8 @@
 
     .product-title { font-size: 9px; }
     .product-meta { font-size: 8px; color: #747475; }
+    .bundle-header td { background: #f1f3f4; }
+    .bundle-component-detail { padding-left: 4mm; }
 
     .table-3-1, .table-3-2 { border: solid 1px #bcbdc0; }
     .table-3-1 p { font-size: 10px; }
@@ -227,8 +229,25 @@
                 <h3 style="color:white; text-align:center;">{{ 'Quantity'|trans({}, 'pdf', document_locale) }}</h3>
             </td>
         </tr>
-        {% for product in loop('order-products', 'order_product', shipment_id ? {order: order.ID, shipment: shipment_id} : {order: order.ID}) %}
-        <tr>
+        {# What the parcel holds. A bundle is not a thing to pack: its components are. They are printed
+           under their bundle, matched on `PARENT` whatever the order of the line ids, and the bundle
+           line is a header without quantity. The delivery note of one shipment carries the components
+           and not the bundle line (it never ships), so the header is read from the whole order. #}
+        {% set shipped_lines = loop('order-products', 'order_product', shipment_id ? {order: order.ID, shipment: shipment_id} : {order: order.ID}) %}
+        {# A bundle header is read from the whole order for a shipment (the bundle never ships). #}
+        {% set order_bundles = (shipment_id ? loop('order-bundle-lines', 'order_product', {order: order.ID}) : shipped_lines)|filter(line => (line.LINE_TYPE|default('')) == 'bundle') %}
+        {% set bundle_ids = order_bundles|map(line => line.ID) %}
+        {# A component whose `PARENT` is no bundle line of the order is printed flat like a classic line. #}
+        {% set bundle_components = shipped_lines|filter(line => (line.LINE_TYPE|default('')) == 'bundle_component' and line.PARENT in bundle_ids) %}
+        {% set printed_lines = shipped_lines|filter(line => (line.LINE_TYPE|default('')) != 'bundle_component' or line.PARENT not in bundle_ids) %}
+        {% if bundle_components is not empty %}
+            {% set printed_ids = printed_lines|map(line => line.ID) %}
+            {% set missing_headers = order_bundles|filter(line => line.ID not in printed_ids and line.ID in bundle_components|map(component => component.PARENT)) %}
+            {% set printed_lines = printed_lines|merge(missing_headers)|sort((first, second) => first.ID <=> second.ID) %}
+        {% endif %}
+        {% for product in printed_lines %}
+        {% set is_bundle = (product.LINE_TYPE|default('')) == 'bundle' %}
+        <tr{% if is_bundle %} class="bundle-header"{% endif %}>
             <td>
                 <p>{{ product.REF }}{% if product.REF != product.PRODUCT_SALE_ELEMENTS_REF %} / {{ product.PRODUCT_SALE_ELEMENTS_REF }}{% endif %}</p>
             </td>
@@ -242,11 +261,35 @@
                 {{ hook('delivery.product-list', {order_product: product.ID, order: order_id}) }}
             </td>
             <td style="text-align:center;">
-                <p>{{ product.QUANTITY }}</p>
+                {% if not is_bundle %}<p>{{ product.QUANTITY }}</p>{% endif %}
             </td>
         </tr>
 
         {{ hook('delivery.order-product', {order: order_id, order_product: product.ID}) }}
+
+        {% if is_bundle %}
+            {% for component in bundle_components|filter(line => line.PARENT == product.ID) %}
+        <tr>
+            <td>
+                <p class="bundle-component-detail">{{ component.REF }}{% if component.REF != component.PRODUCT_SALE_ELEMENTS_REF %} / {{ component.PRODUCT_SALE_ELEMENTS_REF }}{% endif %}</p>
+            </td>
+            <td>
+                <p class="product-title bundle-component-detail">{{ component.TITLE }}</p>
+                {% set combinations = loop('combinations', 'order_product_attribute_combination', {order_product: component.ID}) %}
+                {% if combinations is not empty %}
+                <p class="product-meta bundle-component-detail">
+                    {%- for combination in combinations %}{% if not loop.first %} · {% endif %}{{ combination.ATTRIBUTE_TITLE }} : {{ combination.ATTRIBUTE_AVAILABILITY_TITLE }}{% endfor %}</p>
+                {% endif %}
+                {{ hook('delivery.product-list', {order_product: component.ID, order: order_id}) }}
+            </td>
+            <td style="text-align:center;">
+                <p>{{ component.QUANTITY }}</p>
+            </td>
+        </tr>
+
+        {{ hook('delivery.order-product', {order: order_id, order_product: component.ID}) }}
+            {% endfor %}
+        {% endif %}
         {% endfor %}
     </table>
 

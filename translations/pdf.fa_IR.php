@@ -46,4 +46,5 @@ return [
     'invoice.imprint' => 'invoice.imprint',
     'page' => 'صفحه',
     'product' => 'محصول',
+    'Included in the bundle' => 'شامل در بسته',
 ];

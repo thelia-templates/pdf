@@ -39,4 +39,5 @@ return [
     'invoice.imprint' => 'invoice.imprint',
     'page' => 'stránka',
     'product' => 'produkt',
+    'Included in the bundle' => 'Súčasť balíka',
 ];
