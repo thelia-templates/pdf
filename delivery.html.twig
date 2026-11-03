@@ -261,7 +261,7 @@
                 {{ hook('delivery.product-list', {order_product: product.ID, order: order_id}) }}
             </td>
             <td style="text-align:center;">
-                {% if not is_bundle %}<p>{{ product.QUANTITY }}</p>{% endif %}
+                {% if not is_bundle %}<p>{{ product.QUANTITY|format_quantity(product.QUANTITY_DECIMALS, product.UNIT_CODE, document_locale) }}</p>{% endif %}
             </td>
         </tr>
 
