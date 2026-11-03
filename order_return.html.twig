@@ -165,7 +165,7 @@
     <tr>
         <td><p>{{ line.ref }}</p></td>
         <td><p class="product-title">{{ line.title }}</p></td>
-        <td style="text-align:center;"><p>{{ line.quantity }}</p></td>
+        <td style="text-align:center;"><p>{{ line.quantity|format_quantity(line.quantity_decimals|default(0), line.unit_code|default(null), document_locale) }}</p></td>
         <td style="text-align:right;"><p>{{ line.refund }}</p></td>
     </tr>
     {% endfor %}
