@@ -270,7 +270,7 @@
             <td><p class="align-right">{% if showUntaxed %}<strong>{{ format_money(product.REAL_PRICE, currency) }}</strong>{% else %}{{ format_money(product.REAL_PRICE, currency) }}{% endif %}</p></td>
             <td><p class="align-right">{{ format_money(product.REAL_PRICE_TAX, currency) }}</p></td>
             <td><p class="align-right">{{ format_money(product.REAL_TAXED_PRICE, currency) }}</p></td>
-            <td><p class="align-center">{{ product.QUANTITY }}</p></td>
+            <td><p class="align-center">{{ product.QUANTITY|format_quantity(product.QUANTITY_DECIMALS, product.UNIT_CODE, document_locale) }}</p></td>
             <td><p class="align-right">{% if showUntaxed %}<strong>{{ format_money(product.REAL_TOTAL_PRICE, currency) }}</strong>{% else %}{{ format_money(product.REAL_TOTAL_PRICE, currency) }}{% endif %}</p></td>
         </tr>
 
