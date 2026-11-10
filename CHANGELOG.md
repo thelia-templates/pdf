@@ -15,6 +15,7 @@ The invoice and the delivery note show the components of a product bundle. Needs
 - The hooks of each line (`invoice.product-list`, `invoice.order-product`, `delivery.product-list`, `delivery.order-product`) are called for each component too, with the same parameters as for a classic line, inside the component row.
 
 ### Changed
+- The package requires `thelia/core` `^3.4`, the version that carries the quantity decimals and units the templates print.
 - A component whose `PARENT` matches no bundle line of the order is printed flat like a classic line, in the order of the order lines.
 - Each component is printed under its own bundle, whatever the order of the line ids, and no longer as a product with a price of 0 in the flat list of the order lines. An order without bundle prints as before.
 
