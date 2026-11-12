@@ -75,4 +75,6 @@ return [
     'Discount without tax' => 'Descuento sin impuestos',
     'Shipment' => 'Envío',
     'Tracking number' => 'Número de seguimiento',
+    'Paid by credit note %ref%' => 'Pagado con el abono %ref%',
+    'Balance paid by %module%' => 'Saldo pagado con %module%',
 ];

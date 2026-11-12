@@ -81,4 +81,6 @@ return [
     'Shipment' => 'Shipment',
     'Tracking number' => 'Tracking number',
     'from %start% to %end%' => 'from %start% to %end%',
+    'Paid by credit note %ref%' => 'Paid by credit note %ref%',
+    'Balance paid by %module%' => 'Balance paid by %module%',
 ];

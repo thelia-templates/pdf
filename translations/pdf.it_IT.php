@@ -71,4 +71,6 @@ return [
     'Discount without tax' => 'Sconto imponibile',
     'Shipment' => 'Spedizione',
     'Tracking number' => 'Numero di tracciamento',
+    'Paid by credit note %ref%' => 'Pagato con nota di credito %ref%',
+    'Balance paid by %module%' => 'Saldo pagato con %module%',
 ];

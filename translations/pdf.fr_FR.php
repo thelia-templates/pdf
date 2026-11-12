@@ -83,4 +83,6 @@ return [
     'Shipment' => 'Expédition',
     'Tracking number' => 'Numéro de suivi',
     'from %start% to %end%' => 'de %start% à %end%',
+    'Paid by credit note %ref%' => 'Réglé par avoir %ref%',
+    'Balance paid by %module%' => 'Solde réglé par %module%',
 ];

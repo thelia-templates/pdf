@@ -73,4 +73,6 @@ return [
     'Original invoice REF' => 'Ursprüngliche Rechnungsnummer',
     'Tax %rate%' => 'MwSt. %rate%',
     'Discount without tax' => 'Rabatt ohne MwSt.',
+    'Paid by credit note %ref%' => 'Bezahlt mit Gutschrift %ref%',
+    'Balance paid by %module%' => 'Restbetrag bezahlt per %module%',
 ];

@@ -67,4 +67,6 @@ return [
     'Original invoice REF' => 'Oorspronkelijk factuurnummer',
     'Tax %rate%' => 'Btw %rate%',
     'Discount without tax' => 'Korting excl. btw',
+    'Paid by credit note %ref%' => 'Betaald met creditnota %ref%',
+    'Balance paid by %module%' => 'Saldo betaald met %module%',
 ];
