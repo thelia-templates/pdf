@@ -85,4 +85,8 @@ return [
     'Group discount %rate% % already included' => 'Group discount %rate% % already included',
     'Paid by credit note %ref%' => 'Paid by credit note %ref%',
     'Balance paid by %module%' => 'Balance paid by %module%',
+    'PICKING SLIP' => 'PICKING SLIP',
+    'Order date' => 'Order date',
+    'Location' => 'Location',
+    'Nothing to pick: this order only holds virtual products.' => 'Nothing to pick: this order only holds virtual products.',
 ];
