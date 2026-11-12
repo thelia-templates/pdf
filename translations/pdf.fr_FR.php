@@ -87,4 +87,8 @@ return [
     'Group discount %rate% % already included' => 'Remise de groupe %rate% % déjà incluse',
     'Paid by credit note %ref%' => 'Réglé par avoir %ref%',
     'Balance paid by %module%' => 'Solde réglé par %module%',
+    'PICKING SLIP' => 'BON DE PRÉPARATION',
+    'Order date' => 'Date de commande',
+    'Location' => 'Emplacement',
+    'Nothing to pick: this order only holds virtual products.' => 'Rien à préparer : cette commande ne contient que des produits virtuels.',
 ];

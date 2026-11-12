@@ -1,0 +1,212 @@
+<style>
+{% verbatim %}
+    @page { margin: 10mm 10mm 13mm 10mm; }
+
+    h1, h2, h3, h4 { color:#f6993c; margin: .5em 0; }
+    h1 { font-size: 30px; }
+    h3 { font-size: 12px; color: #58585a; margin: .2em 0; }
+    h3 span { font-size: inherit; color: #f6993c; }
+
+    p, td { color:#58585a; font-size: 9px; }
+    p { margin: .5em 0; }
+    span { font-size: 9px; }
+
+    table { border-collapse: collapse; width: 100%; }
+    td { vertical-align: top; }
+
+    .table-info { margin-bottom: 10px; }
+    .table-products td { border: solid 1px #dddddd; }
+    .table-products p { margin: 0; }
+    .table-products h3 { margin: .2em 0; }
+
+    .product-title { font-size: 9px; }
+    .product-meta { font-size: 8px; color: #747475; }
+    .bundle-header td { background: #f1f3f4; }
+    .bundle-component-detail { padding-left: 4mm; }
+
+    .barcode { text-align: right; }
+    .barcode img { height: 12mm; }
+    .barcode p { font-size: 9px; margin: 0; }
+
+    .tick-box { width: 4mm; height: 4mm; border: solid 1px #58585a; margin: 0 auto; }
+
+    .nothing-to-pick { border-left: solid 3px #f6993c; padding: 3mm; }
+    .nothing-to-pick p { font-size: 12px; }
+
+    .align-left { text-align: left; }
+    .align-center { text-align: center; }
+    .align-right { text-align: right; }
+
+    /* dompdf pins a fixed element to the page content box, so a negative offset is needed
+       to move the footer into the bottom margin and keep it clear of the page content. */
+    .pdf-footer { position: fixed; bottom: -6mm; left: 0; right: 0; }
+    /* dompdf 3.1 resolves counter(page) but not counter(pages) (always 0), so only the
+       current page number is shown; the total is intentionally omitted. */
+    .pdf-footer .page-counter:after { content: counter(page); }
+{% endverbatim %}
+{{ hook('preparation.css') }}
+</style>
+
+{# The picking slip is read by whoever prepares the parcels, so it is written in the language of the
+   shop and not in the one of the customer, as the delivery note is. `locale` cannot say it: the Twig
+   engine replaces whatever the caller passed with the language of the current request, which in the
+   back office is the one of the administrator. The default language of the shop is read from the
+   language loop. #}
+{% set document_locale %}
+    {%- for language in loop('preparation.lang', 'lang', {default_only: true, active: '*', visible: '*'}) -%}
+        {{- language.LOCALE -}}
+    {%- endfor -%}
+{% endset %}
+{% set document_locale = document_locale|trim ?: locale %}
+
+<div class="pdf-footer">
+    <table>
+        <tbody>
+        <tr>
+            <td class="align-center">{{ config('store_name') }}</td>
+            <td class="align-right" style="width: 15%;">{{ 'page'|trans({}, 'pdf', document_locale) }} <span class="page-counter"></span></td>
+        </tr>
+        </tbody>
+    </table>
+</div>
+
+{# One block per order, a page break before each but the first. `page-break-after` would add a blank
+   last page under dompdf 3.1. #}
+{% for order_id in order_ids %}
+{% for order in loop('preparation.order', 'order', {id: order_id, customer: '*'}) %}
+
+    {# What is to be picked. Services (a gift wrapping) and virtual products are not picked. A bundle is
+       not a thing to pick, its components are: they are printed under their bundle, matched on
+       `PARENT`, and a bundle without any component to pick is not printed. A component whose
+       `PARENT` is no bundle of the order is printed flat like a classic line. #}
+    {% set pickable_lines = loop('preparation.order-products', 'order_product', {order: order.ID})
+        |filter(line => not line.VIRTUAL and (line.LINE_TYPE|default('')) != 'service') %}
+    {% set bundle_ids = pickable_lines|filter(line => (line.LINE_TYPE|default('')) == 'bundle')|map(line => line.ID) %}
+    {% set bundle_components = pickable_lines|filter(line => (line.LINE_TYPE|default('')) == 'bundle_component' and line.PARENT in bundle_ids) %}
+    {% set component_parent_ids = bundle_components|map(component => component.PARENT) %}
+    {# No storage location exists in the core: the lines are walked in the order of the references. #}
+    {% set printed_lines = pickable_lines
+        |filter(line => ((line.LINE_TYPE|default('')) != 'bundle' or line.ID in component_parent_ids) and ((line.LINE_TYPE|default('')) != 'bundle_component' or line.PARENT not in bundle_ids))
+        |sort((first, second) => [first.REF, first.PRODUCT_SALE_ELEMENTS_REF] <=> [second.REF, second.PRODUCT_SALE_ELEMENTS_REF]) %}
+
+    {# The storage location is written by a module through the hook of each line. It is asked once per
+       line, here, so that the column exists only when a module wrote something. #}
+    {% set locations = {} %}
+    {% for line in printed_lines|merge(bundle_components) %}
+        {% set locations = locations|merge({('line_' ~ line.ID): hook('preparation.product-location', {order_product: line.ID, order: order_id})|trim}) %}
+    {% endfor %}
+    {% set has_locations = locations|filter(location => location != '') is not empty %}
+
+    <div{% if not loop.parent.loop.first %} style="page-break-before: always;"{% endif %}>
+    <table class="table-info">
+        <col style="width: 60%;" />
+        <col style="width: 40%;" />
+        <tr>
+            <td>
+                <h1>{{ 'PICKING SLIP'|trans({}, 'pdf', document_locale) }}</h1>
+                <h3>{{ 'Order REF'|trans({}, 'pdf', document_locale) }} : <span>{{ order.REF }}</span></h3>
+                <h3>{{ 'Order date'|trans({}, 'pdf', document_locale) }} : <span>{{ format_date(order.INVOICE_DATE, 'date', null, document_locale) }}</span></h3>
+                <h3>{{ 'Customer'|trans({}, 'pdf', document_locale) }} : <span>{% for customer in loop('preparation.customer', 'customer', {id: order.CUSTOMER, current: 0}) %}{{ customer.FIRSTNAME }} {{ customer.LASTNAME }}{% endfor %}</span></h3>
+            </td>
+            <td class="barcode">
+                <img src="{{ barcode_code128(order.REF) }}" alt="{{ order.REF }}">
+                <p>{{ order.REF }}</p>
+            </td>
+        </tr>
+    </table>
+
+    {{ hook('preparation.after-information', {order: order_id}) }}
+
+    {% if printed_lines is empty %}
+    <div class="nothing-to-pick">
+        <p>{{ 'Nothing to pick: this order only holds virtual products.'|trans({}, 'pdf', document_locale) }}</p>
+    </div>
+    {% else %}
+    <table class="table-products" style="padding-top: 5mm;">
+        <col style="width: 6%; padding: 1.5mm;" />
+        <col style="width: 20%; padding: 1.5mm;" />
+        <col style="width: {{ has_locations ? 46 : 60 }}%; padding: 1.5mm;" />
+        {% if has_locations %}<col style="width: 14%; padding: 1.5mm;" />{% endif %}
+        <col style="width: 14%; padding: 1.5mm;" />
+        <tr>
+            <td style="background:#f1f3f4;"></td>
+            <td style="background:#f1f3f4;">
+                <h3>{{ 'Ref'|trans({}, 'pdf', document_locale) }}</h3>
+            </td>
+            <td style="background:#f1f3f4;">
+                <h3>{{ 'product'|trans({}, 'pdf', document_locale) }}</h3>
+            </td>
+            {% if has_locations %}
+            <td style="background:#f1f3f4;">
+                <h3>{{ 'Location'|trans({}, 'pdf', document_locale) }}</h3>
+            </td>
+            {% endif %}
+            <td style="background-color:#f6993c;">
+                <h3 style="color:white; text-align:center;">{{ 'Quantity'|trans({}, 'pdf', document_locale) }}</h3>
+            </td>
+        </tr>
+        {% for product in printed_lines %}
+        {% set is_bundle = (product.LINE_TYPE|default('')) == 'bundle' %}
+        <tr{% if is_bundle %} class="bundle-header"{% endif %}>
+            <td style="text-align:center;">
+                {% if not is_bundle %}<div class="tick-box"></div>{% endif %}
+            </td>
+            <td>
+                <p>{{ product.REF }}{% if product.REF != product.PRODUCT_SALE_ELEMENTS_REF %} / {{ product.PRODUCT_SALE_ELEMENTS_REF }}{% endif %}</p>
+            </td>
+            <td>
+                <p class="product-title">{{ product.TITLE }}</p>
+                {% set combinations = loop('preparation.combinations', 'order_product_attribute_combination', {order_product: product.ID}) %}
+                {% if combinations is not empty %}
+                <p class="product-meta">
+                    {%- for combination in combinations %}{% if not loop.first %} · {% endif %}{{ combination.ATTRIBUTE_TITLE }} : {{ combination.ATTRIBUTE_AVAILABILITY_TITLE }}{% endfor %}</p>
+                {% endif %}
+            </td>
+            {% if has_locations %}<td><p>{{ locations['line_' ~ product.ID] }}</p></td>{% endif %}
+            <td style="text-align:center;">
+                {% if not is_bundle %}<p>{{ product.QUANTITY }}</p>{% endif %}
+            </td>
+        </tr>
+
+        {% if is_bundle %}
+            {% for component in bundle_components|filter(line => line.PARENT == product.ID)|sort((first, second) => [first.REF, first.PRODUCT_SALE_ELEMENTS_REF] <=> [second.REF, second.PRODUCT_SALE_ELEMENTS_REF]) %}
+        <tr>
+            <td style="text-align:center;"><div class="tick-box"></div></td>
+            <td>
+                <p class="bundle-component-detail">{{ component.REF }}{% if component.REF != component.PRODUCT_SALE_ELEMENTS_REF %} / {{ component.PRODUCT_SALE_ELEMENTS_REF }}{% endif %}</p>
+            </td>
+            <td>
+                <p class="product-title bundle-component-detail">{{ component.TITLE }}</p>
+                {% set combinations = loop('preparation.combinations', 'order_product_attribute_combination', {order_product: component.ID}) %}
+                {% if combinations is not empty %}
+                <p class="product-meta bundle-component-detail">
+                    {%- for combination in combinations %}{% if not loop.first %} · {% endif %}{{ combination.ATTRIBUTE_TITLE }} : {{ combination.ATTRIBUTE_AVAILABILITY_TITLE }}{% endfor %}</p>
+                {% endif %}
+            </td>
+            {% if has_locations %}<td><p>{{ locations['line_' ~ component.ID] }}</p></td>{% endif %}
+            <td style="text-align:center;">
+                <p>{{ component.QUANTITY }}</p>
+            </td>
+        </tr>
+            {% endfor %}
+        {% endif %}
+        {% endfor %}
+    </table>
+    {% endif %}
+
+    {# What the buyer wrote for whoever receives the parcel belongs on the picking list too. #}
+    {% if order.GIFT_MESSAGE|default('') %}
+    <table style="padding-top: 5mm;">
+        <col style="width: 100%; padding: 3mm;" />
+        <tr>
+            <td style="border-left:solid 3px #f6993c; padding-top: 2mm">
+                <h3>{{ 'Message for the recipient'|trans({}, 'pdf', document_locale) }}</h3>
+                <p>{{ order.GIFT_MESSAGE|nl2br }}</p>
+            </td>
+        </tr>
+    </table>
+    {% endif %}
+    </div>
+
+{% endfor %}
+{% endfor %}
