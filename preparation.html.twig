@@ -50,14 +50,19 @@
 {# The picking slip is read by whoever prepares the parcels, so it is written in the language of the
    shop and not in the one of the customer, as the delivery note is. `locale` cannot say it: the Twig
    engine replaces whatever the caller passed with the language of the current request, which in the
-   back office is the one of the administrator. The default language of the shop is read from the
-   language loop. #}
-{% set document_locale %}
-    {%- for language in loop('preparation.lang', 'lang', {default_only: true, active: '*', visible: '*'}) -%}
-        {{- language.LOCALE -}}
-    {%- endfor -%}
-{% endset %}
-{% set document_locale = document_locale|trim ?: locale %}
+   back office is the one of the administrator. The caller therefore passes the language it wants as
+   `picking_slip_locale`, which the engine leaves alone. Without it, the default language of the shop
+   is read from the language loop. #}
+{% if picking_slip_locale is defined and picking_slip_locale %}
+    {% set document_locale = picking_slip_locale %}
+{% else %}
+    {% set document_locale %}
+        {%- for language in loop('preparation.lang', 'lang', {default_only: true, active: '*', visible: '*'}) -%}
+            {{- language.LOCALE -}}
+        {%- endfor -%}
+    {% endset %}
+    {% set document_locale = document_locale|trim ?: locale %}
+{% endif %}
 
 <div class="pdf-footer">
     <table>
