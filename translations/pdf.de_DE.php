@@ -75,4 +75,6 @@ return [
     'Discount without tax' => 'Rabatt ohne MwSt.',
     'Included in the bundle' => 'Im Paket enthalten',
     'Group discount %rate% % already included' => 'Gruppenrabatt %rate% % bereits enthalten',
+    'Paid by credit note %ref%' => 'Bezahlt mit Gutschrift %ref%',
+    'Balance paid by %module%' => 'Restbetrag bezahlt per %module%',
 ];

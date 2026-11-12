@@ -411,6 +411,24 @@
                     </td>
                 </tr>
                 {% endif %}
+
+                {# The credit notes that paid part of the order (CreditNote module, `order-credit-note` loop), then what they left to the payment module. A settlement, not a discount: the total above does not change. The loop is only called when the module is installed and active, so a shop without it prints the invoice it always printed and logs no unknown loop. #}
+                {% set creditNoteUses = loopCount('module', {code: 'CreditNote', active: 1}) > 0 ? loop('order-credit-notes', 'order-credit-note', {order: order_id}) : [] %}
+                {% if creditNoteUses|length %}
+                {% for creditNoteUse in creditNoteUses %}
+                <tr>
+                    <td class="table-3-1"><p>{{ 'Paid by credit note %ref%'|trans({'%ref%': creditNoteUse.REF}, 'pdf', document_locale) }}</p></td>
+                    <td class="table-3-1 align-right"><p>{{ format_money(creditNoteUse.AMOUNT, currency) }}</p></td>
+                </tr>
+                {% endfor %}
+                {% set leftByCreditNotes = order.TOTAL_TAXED_AMOUNT - creditNoteUses|reduce((paid, creditNoteUse) => paid + creditNoteUse.AMOUNT, 0) %}
+                {% if leftByCreditNotes >= 0.005 %}
+                <tr>
+                    <td class="table-3-1"><p>{% for module in loop('balance-payment-module', 'module', {id: order.PAYMENT_MODULE}) %}{{ 'Balance paid by %module%'|trans({'%module%': module.TITLE}, 'pdf', document_locale) }}{% endfor %}</p></td>
+                    <td class="table-3-1 align-right"><p>{{ format_money(leftByCreditNotes, currency) }}</p></td>
+                </tr>
+                {% endif %}
+                {% endif %}
             </table>
         </td>
     </tr>

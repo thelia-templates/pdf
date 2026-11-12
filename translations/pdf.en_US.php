@@ -83,4 +83,6 @@ return [
     'from %start% to %end%' => 'from %start% to %end%',
     'Included in the bundle' => 'Included in the bundle',
     'Group discount %rate% % already included' => 'Group discount %rate% % already included',
+    'Paid by credit note %ref%' => 'Paid by credit note %ref%',
+    'Balance paid by %module%' => 'Balance paid by %module%',
 ];

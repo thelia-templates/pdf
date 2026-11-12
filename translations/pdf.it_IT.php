@@ -73,4 +73,6 @@ return [
     'Tracking number' => 'Numero di tracciamento',
     'Included in the bundle' => 'Incluso nel pacchetto',
     'Group discount %rate% % already included' => 'Sconto di gruppo %rate% % già incluso',
+    'Paid by credit note %ref%' => 'Pagato con nota di credito %ref%',
+    'Balance paid by %module%' => 'Saldo pagato con %module%',
 ];
