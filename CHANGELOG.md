@@ -14,6 +14,9 @@ The invoice and the delivery note show the components of a product bundle. Needs
 - The label "Included in the bundle" in every language of the template.
 - The hooks of each line (`invoice.product-list`, `invoice.order-product`, `delivery.product-list`, `delivery.order-product`) are called for each component too, with the same parameters as for a classic line, inside the component row.
 
+- The invoice of an order paid with credit notes prints, under its total, one line "Paid by credit note" per credit note with the amount it paid, then the balance left to the payment module when there is one. The total of the invoice does not change. Needs the CreditNote module 5.0 (`order-credit-note` loop); without the module installed and active the invoice prints as before and the loop is not called.
+- The labels "Paid by credit note %ref%" and "Balance paid by %module%" in German, English, Spanish, French, Italian and Dutch.
+
 ### Changed
 - The package requires `thelia/core` `^3.4`, the version that carries the quantity decimals and units the templates print.
 - A component whose `PARENT` matches no bundle line of the order is printed flat like a classic line, in the order of the order lines.
