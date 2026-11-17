@@ -110,7 +110,7 @@
             <td>
                 <h1>{{ 'PICKING SLIP'|trans({}, 'pdf', document_locale) }}</h1>
                 <h3>{{ 'Order REF'|trans({}, 'pdf', document_locale) }} : <span>{{ order.REF }}</span></h3>
-                <h3>{{ 'Order date'|trans({}, 'pdf', document_locale) }} : <span>{{ format_date(order.INVOICE_DATE, 'date', null, document_locale) }}</span></h3>
+                <h3>{{ 'Order date'|trans({}, 'pdf', document_locale) }} : <span>{{ format_date(order.CREATE_DATE, 'date', null, document_locale) }}</span></h3>
                 <h3>{{ 'Customer'|trans({}, 'pdf', document_locale) }} : <span>{% for customer in loop('preparation.customer', 'customer', {id: order.CUSTOMER, current: 0}) %}{{ customer.FIRSTNAME }} {{ customer.LASTNAME }}{% endfor %}</span></h3>
             </td>
             <td class="barcode">
