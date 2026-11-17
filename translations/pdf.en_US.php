@@ -83,4 +83,8 @@ return [
     'from %start% to %end%' => 'from %start% to %end%',
     'Included in the bundle' => 'Included in the bundle',
     'Group discount %rate% % already included' => 'Group discount %rate% % already included',
+    'PICKING SLIP' => 'PICKING SLIP',
+    'Order date' => 'Order date',
+    'Location' => 'Location',
+    'Nothing to pick: this order only holds virtual products.' => 'Nothing to pick: this order only holds virtual products.',
 ];

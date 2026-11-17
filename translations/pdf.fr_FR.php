@@ -85,4 +85,8 @@ return [
     'from %start% to %end%' => 'de %start% à %end%',
     'Included in the bundle' => 'Inclus dans le pack',
     'Group discount %rate% % already included' => 'Remise de groupe %rate% % déjà incluse',
+    'PICKING SLIP' => 'BON DE PRÉPARATION',
+    'Order date' => 'Date de commande',
+    'Location' => 'Emplacement',
+    'Nothing to pick: this order only holds virtual products.' => 'Rien à préparer : cette commande ne contient que des produits virtuels.',
 ];
