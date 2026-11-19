@@ -6,7 +6,9 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and
 
 ## [Unreleased]
 
-The invoice and the delivery note show the components of a product bundle. Needs a Thelia core that stores bundles (`LINE_TYPE` and `PARENT` on the `order_product` loop).
+## [1.5.0] 2026-11-19
+
+The invoice and the delivery note show the components of a product bundle. Needs Thelia core 3.4, which stores bundles (`LINE_TYPE` and `PARENT` on the `order_product` loop).
 
 ### Added
 - The invoice prints the components of a bundle under its line, indented, with their quantity, their title and the mention "Included in the bundle". The bundle line keeps its price and its taxes, the components print no price and no tax, and the totals do not change.
