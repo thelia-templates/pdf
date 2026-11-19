@@ -4,6 +4,14 @@ All notable changes to this template are documented here.
 
 The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and the template adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.4.2] 2026-11-19
+
+The invoice prints the credit notes that paid an order. Needs Thelia core 3.3.
+
+### Added
+- The invoice of an order paid with credit notes prints, under its total, one line "Paid by credit note" per credit note with the amount it paid, then the balance left to the payment module when there is one. The total of the invoice does not change. Needs the CreditNote module 5.0 (`order-credit-note` loop); without the module installed and active the invoice prints as before and the loop is not called.
+- The labels "Paid by credit note %ref%" and "Balance paid by %module%" in German, English, Spanish, French, Italian and Dutch.
+
 ## [1.4.1] 2026-10-29
 
 Packaging fix of 1.4.0. Needs Thelia core 3.3.
