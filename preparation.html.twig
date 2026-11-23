@@ -89,18 +89,20 @@
     {% set bundle_ids = pickable_lines|filter(line => (line.LINE_TYPE|default('')) == 'bundle')|map(line => line.ID) %}
     {% set bundle_components = pickable_lines|filter(line => (line.LINE_TYPE|default('')) == 'bundle_component' and line.PARENT in bundle_ids) %}
     {% set component_parent_ids = bundle_components|map(component => component.PARENT) %}
-    {# No storage location exists in the core: the lines are walked in the order of the references. #}
     {% set printed_lines = pickable_lines
-        |filter(line => ((line.LINE_TYPE|default('')) != 'bundle' or line.ID in component_parent_ids) and ((line.LINE_TYPE|default('')) != 'bundle_component' or line.PARENT not in bundle_ids))
-        |sort((first, second) => [first.REF, first.PRODUCT_SALE_ELEMENTS_REF] <=> [second.REF, second.PRODUCT_SALE_ELEMENTS_REF]) %}
+        |filter(line => ((line.LINE_TYPE|default('')) != 'bundle' or line.ID in component_parent_ids) and ((line.LINE_TYPE|default('')) != 'bundle_component' or line.PARENT not in bundle_ids)) %}
 
     {# The storage location is written by a module through the hook of each line. It is asked once per
-       line, here, so that the column exists only when a module wrote something. #}
+       line, before the lines are sorted, so that the column exists only when a module wrote something. #}
     {% set locations = {} %}
     {% for line in printed_lines|merge(bundle_components) %}
         {% set locations = locations|merge({('line_' ~ line.ID): hook('preparation.product-location', {order_product: line.ID, order: order_id})|trim}) %}
     {% endfor %}
     {% set has_locations = locations|filter(location => location != '') is not empty %}
+
+    {# The picker walks the storage locations in order: a line a module located comes first, by its
+       location, then the others by reference. Without any location, the order of the references. #}
+    {% set printed_lines = printed_lines|sort((first, second) => [locations['line_' ~ first.ID] == '' ? 1 : 0, locations['line_' ~ first.ID], first.REF, first.PRODUCT_SALE_ELEMENTS_REF] <=> [locations['line_' ~ second.ID] == '' ? 1 : 0, locations['line_' ~ second.ID], second.REF, second.PRODUCT_SALE_ELEMENTS_REF]) %}
 
     <div{% if not loop.parent.loop.first %} style="page-break-before: always;"{% endif %}>
     <table class="table-info">
@@ -114,7 +116,9 @@
                 <h3>{{ 'Customer'|trans({}, 'pdf', document_locale) }} : <span>{% for customer in loop('preparation.customer', 'customer', {id: order.CUSTOMER, current: 0}) %}{{ customer.FIRSTNAME }} {{ customer.LASTNAME }}{% endfor %}</span></h3>
             </td>
             <td class="barcode">
-                <img src="{{ barcode_code128(order.REF) }}" alt="{{ order.REF }}">
+                {# No barcode for a reference Code 128 cannot encode (an accent): the reference stays printed. #}
+                {% set barcode = barcode_code128(order.REF) %}
+                {% if barcode %}<img src="{{ barcode }}" alt="{{ order.REF }}">{% endif %}
                 <p>{{ order.REF }}</p>
             </td>
         </tr>
@@ -174,7 +178,7 @@
         </tr>
 
         {% if is_bundle %}
-            {% for component in bundle_components|filter(line => line.PARENT == product.ID)|sort((first, second) => [first.REF, first.PRODUCT_SALE_ELEMENTS_REF] <=> [second.REF, second.PRODUCT_SALE_ELEMENTS_REF]) %}
+            {% for component in bundle_components|filter(line => line.PARENT == product.ID)|sort((first, second) => [locations['line_' ~ first.ID] == '' ? 1 : 0, locations['line_' ~ first.ID], first.REF, first.PRODUCT_SALE_ELEMENTS_REF] <=> [locations['line_' ~ second.ID] == '' ? 1 : 0, locations['line_' ~ second.ID], second.REF, second.PRODUCT_SALE_ELEMENTS_REF]) %}
         <tr>
             <td style="text-align:center;"><div class="tick-box"></div></td>
             <td>
