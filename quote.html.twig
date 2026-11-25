@@ -1,0 +1,214 @@
+<style>
+{% verbatim %}
+    @page { margin: 10mm 10mm 13mm 10mm; }
+
+    h1, h2, h3, h4 { color:#f6993c; margin: .5em 0; }
+    h1 { font-size: 30px; }
+    h2 { font-size: 16px; }
+    h3 { font-size: 14px; }
+    h4 { color:#58585a; font-size: 12px; }
+
+    p, td { color:#58585a; font-size: 9px; }
+    p { margin: .5em 0; }
+    span { font-size: 9px; }
+
+    table { border-collapse: collapse; width: 100%; }
+    tr { width: 100%; }
+    td { vertical-align: top; }
+
+    .table-info { margin-bottom: 15px; }
+    .table-info h3 { font-size: 12px; color: #58585a; margin-top: 0; margin-bottom: 6px; }
+    .table-info h3 span { font-size: inherit; color: #f6993c; }
+
+    .table-products td { border:solid 1px #dddddd; }
+    .table-products p { margin: 0; }
+    .table-products h3 { font-size: 12px; margin: .2em 0; }
+
+    .store-imprint p { font-size: 8px; color: #747475; margin: 0; line-height: 1.35; }
+    .store-imprint .store-imprint-name { font-size: 9px; color: #58585a; }
+
+    .product-title { font-size: 9px; }
+
+    .table-instructions { border-left: solid 3px #f6993c; }
+    .table-instructions p { font-size: 9px; }
+
+    .align-left { text-align: left; }
+    .align-center { text-align: center; }
+    .align-right{ text-align: right; }
+
+    /* dompdf pins a fixed element to the page content box, so a negative offset is needed
+       to move the footer into the bottom margin and keep it clear of the page content. */
+    .pdf-footer { position: fixed; bottom: -6mm; left: 0; right: 0; }
+    /* dompdf 3.1 resolves counter(page) but not counter(pages) (always 0), so only the
+       current page number is shown; the total is intentionally omitted. */
+    .pdf-footer .page-counter:after { content: counter(page); }
+{% endverbatim %}
+{{ hook('quote.css') }}
+</style>
+
+{# The language of the document is the one frozen on the quote when it was sent, handed over as
+   `document_locale`: `locale` cannot say it, the Twig engine replaces it with the language of the
+   current request. Every text coming from the shop or from a line is printed escaped. #}
+{% set document_locale = document_locale ?? locale %}
+
+<div class="pdf-footer">
+    <table>
+    <col style="width:15%">
+    <col style="width:70%">
+    <col style="width:15%">
+        <tbody>
+        <tr>
+            <td></td>
+            <td class="align-center">
+                {% set city = config('store_zipcode') ~ ' ' ~ config('store_city') %}
+                {{ config('store_name') }}
+                {% if city|trim %} - {{ city }}{% endif %}
+                {% include 'legal_identifiers.html.twig' with {layout: 'line', document_locale: document_locale} only %}
+            </td>
+            <td class="align-right">{{ 'page'|trans({}, 'pdf', document_locale) }} <span class="page-counter"></span></td>
+        </tr>
+        </tbody>
+    </table>
+</div>
+
+<div class="pdf-header">{{ hook('quote.header', {quote_id: quote_id}) }}</div>
+
+<table class="table-info">
+    <col style="width: 60%; padding: 0mm;" />
+    <col style="width: 40%; padding: 0mm;" />
+    <tr>
+        <td>
+            <table>
+                <tr>
+                    <td><h1>{{ 'QUOTE'|trans({}, 'pdf', document_locale) }}</h1></td>
+                </tr>
+                <tr>
+                    <td><h3>{{ 'Quote REF'|trans({}, 'pdf', document_locale) }} : <span>{{ quote_ref }}</span></h3></td>
+                </tr>
+                <tr>
+                    <td><h3>{{ 'Revision'|trans({}, 'pdf', document_locale) }} : <span>{{ revision_number }}</span></h3></td>
+                </tr>
+                {% if sent_at %}
+                <tr>
+                    <td><h3>{{ 'Quote date'|trans({}, 'pdf', document_locale) }} : <span>{{ sent_at }}</span></h3></td>
+                </tr>
+                {% endif %}
+                {% if valid_until %}
+                <tr>
+                    <td><h3>{{ 'Valid until'|trans({}, 'pdf', document_locale) }} : <span>{{ valid_until }}</span></h3></td>
+                </tr>
+                {% endif %}
+                <tr>
+                    <td><h3>{{ 'Customer'|trans({}, 'pdf', document_locale) }} : <span>{{ customer_name }}{% if company_name %} ({{ company_name }}){% endif %}</span></h3></td>
+                </tr>
+            </table>
+        </td>
+        <td class="store-imprint align-right">
+            <p class="store-imprint-name"><strong>{{ config('store_name') }}</strong></p>
+            {% for line in [config('store_address1'), config('store_address2'), config('store_address3')] %}
+                {% if line|trim %}<p>{{ line }}</p>{% endif %}
+            {% endfor %}
+            {% set city = config('store_zipcode') ~ ' ' ~ config('store_city') %}
+            {% if city|trim %}<p>{{ city }}</p>{% endif %}
+            {% include 'legal_identifiers.html.twig' with {layout: 'list', document_locale: document_locale} only %}
+            {% if config('store_phone') %}<p>{{ 'Phone: '|trans({}, 'pdf', document_locale) }}{{ config('store_phone') }}</p>{% endif %}
+            {% if config('store_email') %}<p>{{ 'Email: '|trans({}, 'pdf', document_locale) }}{{ config('store_email') }}</p>{% endif %}
+        </td>
+    </tr>
+</table>
+
+{{ hook('quote.after-information', {quote_id: quote_id}) }}
+
+{% if delivery_address or invoice_address %}
+<table class="table-address">
+    <col style="width: 50%; padding: 3mm;" />
+    <col style="padding: 3mm;" />
+    <tr>
+        <td style="border-left: solid 1mm #f6993c;">
+            <h3>{{ 'Delivery address'|trans({}, 'pdf', document_locale) }}</h3>
+            {% for line in delivery_address %}<p>{{ line }}</p>{% endfor %}
+        </td>
+        <td style="border-left: solid 1mm #f6993c;">
+            <h3>{{ 'Invoice address'|trans({}, 'pdf', document_locale) }}</h3>
+            {% for line in invoice_address %}<p>{{ line }}</p>{% endfor %}
+        </td>
+    </tr>
+</table>
+{% endif %}
+
+<table class="table-products" style="margin-top: 5mm;">
+    <col style="width: 38%; padding: 1.5mm;" />
+    <col style="width: 10%; padding: 1.5mm;" />
+    <col style="width: 18%; padding: 1.5mm;" />
+    <col style="width: 18%; padding: 1.5mm;" />
+    <col style="width: 16%; padding: 1.5mm;" />
+    <tr>
+        <td style="background:#f1f3f4;"><h3 style="color:#58585a;">{{ 'Product'|trans({}, 'pdf', document_locale) }}</h3></td>
+        <td style="background:#f1f3f4;"><h3 style="color:#58585a; text-align:center;">{{ 'Quantity'|trans({}, 'pdf', document_locale) }}</h3></td>
+        <td style="background:#f1f3f4;"><h3 style="color:#58585a; text-align:right;">{{ 'Catalogue price'|trans({}, 'pdf', document_locale) }}</h3></td>
+        <td style="background:#f6993c;"><h3 style="color:white; text-align:right;">{{ 'Negotiated price'|trans({}, 'pdf', document_locale) }}</h3></td>
+        <td style="background:#f1f3f4;"><h3 style="color:#58585a; text-align:right;">{{ 'Total without tax'|trans({}, 'pdf', document_locale) }}</h3></td>
+    </tr>
+    {% for line in lines %}
+    <tr>
+        <td>
+            <p class="product-title">{{ line.title }}</p>
+            <p>{{ 'Ref'|trans({}, 'pdf', document_locale) }} {{ line.ref }}{% if line.sale_elements_ref != line.ref %} / {{ line.sale_elements_ref }}{% endif %}</p>
+        </td>
+        <td style="text-align:center;"><p>{{ line.quantity }}</p></td>
+        <td style="text-align:right;"><p>{{ line.catalog_price }}</p></td>
+        <td style="text-align:right;"><p><strong>{{ line.price }}</strong></p></td>
+        <td style="text-align:right;"><p>{{ line.total }}</p></td>
+    </tr>
+    {% endfor %}
+</table>
+
+{{ hook('quote.after-products', {quote_id: quote_id}) }}
+
+<table cellspacing="0" cellpadding="0" style="margin-top: 5mm; padding-bottom: 8mm">
+    <col style="width: 60%; padding: 1mm;" />
+    <col style="width: 40%; padding: 1mm;" />
+    <tr>
+        <td>
+            {% if merchant_note %}
+            <h3>{{ 'Message from the shop'|trans({}, 'pdf', document_locale) }}</h3>
+            <p>{{ merchant_note|nl2br }}</p>
+            {% endif %}
+        </td>
+        <td>
+            <table class="table-3">
+                <col style="width: 50%; padding: 0 1mm 1mm;">
+                <col style="width: 50%; padding: 0 1mm 1mm;">
+                <tr>
+                    <td class="table-3-1"><p>{{ 'Total of the lines without tax'|trans({}, 'pdf', document_locale) }}</p></td>
+                    <td class="table-3-1 align-right"><p>{{ items_untaxed }}</p></td>
+                </tr>
+                {% if has_postage %}
+                <tr>
+                    <td class="table-3-1"><p>{{ 'Postage without tax'|trans({}, 'pdf', document_locale) }}</p></td>
+                    <td class="table-3-1 align-right"><p>{{ postage_untaxed }}</p></td>
+                </tr>
+                {% endif %}
+                <tr>
+                    <td class="table-3-1"><p>{{ 'Total tax amount'|trans({}, 'pdf', document_locale) }}</p></td>
+                    <td class="table-3-1 align-right"><p>{{ items_tax }}{% if has_postage %} + {{ postage_tax }}{% endif %}</p></td>
+                </tr>
+                {% if has_discount %}
+                <tr>
+                    <td class="table-3-1"><p>{{ 'Discount with tax'|trans({}, 'pdf', document_locale) }}</p></td>
+                    <td class="table-3-1 align-right"><p>{{ discount }}</p></td>
+                </tr>
+                {% endif %}
+                <tr>
+                    <td class="table-3-1" style="background:#f6993c;"><h3 style="color:white;">{{ 'Total'|trans({}, 'pdf', document_locale) }}</h3></td>
+                    <td class="table-3-1 align-right" style="background:#f6993c;"><h3 style="color:white;">{{ total_taxed }}</h3></td>
+                </tr>
+            </table>
+            {% if reverse_charge %}
+            <p>{{ 'Reverse charge: VAT due by the customer'|trans({}, 'pdf', document_locale) }}{% if customer_vat_number %} ({{ 'Customer VAT: '|trans({}, 'pdf', document_locale) }}{{ customer_vat_number }}){% endif %}</p>
+            {% endif %}
+        </td>
+    </tr>
+</table>
+
+{{ hook('quote.after-summary', {quote_id: quote_id}) }}

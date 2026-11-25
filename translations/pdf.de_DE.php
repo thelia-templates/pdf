@@ -78,4 +78,13 @@ return [
     'Group discount %rate% % already included' => 'Gruppenrabatt %rate% % bereits enthalten',
     'Paid by credit note %ref%' => 'Bezahlt mit Gutschrift %ref%',
     'Balance paid by %module%' => 'Restbetrag bezahlt per %module%',
+    'QUOTE' => 'ANGEBOT',
+    'Quote REF' => 'Angebotsnummer',
+    'Revision' => 'Revision',
+    'Quote date' => 'Angebotsdatum',
+    'Valid until' => 'Gültig bis',
+    'Catalogue price' => 'Katalogpreis',
+    'Negotiated price' => 'Verhandelter Preis',
+    'Message from the shop' => 'Nachricht des Shops',
+    'Total of the lines without tax' => 'Summe der Positionen ohne Steuer',
 ];
