@@ -1,0 +1,25 @@
+{# Legal identifiers of the shop, shared by the documents that print them. Each one shows up only
+   when it applies.
+
+   layout                 `line`: " - a - b", for a page footer; `list`: one <p> each, for an imprint
+   document_locale        the language of the document
+   customer_vat_exempted  the buyer owes the VAT himself (optional)
+   customer_vat_number    the VAT number of that buyer, printed when they are exempted (optional)
+   reverse_charge         the reverse charge mention, already translated, printed as given (optional) #}
+{% set legal_identifiers = [] %}
+{% if config('store_siret') %}{% set legal_identifiers = legal_identifiers|merge(['SIRET: '|trans({}, 'pdf', document_locale) ~ config('store_siret')]) %}{% endif %}
+{% if config('store_ape_code') %}{% set legal_identifiers = legal_identifiers|merge(['APE code: '|trans({}, 'pdf', document_locale) ~ config('store_ape_code')]) %}{% endif %}
+{% if config('store_vat_intracom') %}{% set legal_identifiers = legal_identifiers|merge(['VAT: '|trans({}, 'pdf', document_locale) ~ config('store_vat_intracom')]) %}{% endif %}
+{% if config('store_eori') %}{% set legal_identifiers = legal_identifiers|merge(['EORI: '|trans({}, 'pdf', document_locale) ~ config('store_eori')]) %}{% endif %}
+{% if config('store_vat_exempt') == '1' %}{% set legal_identifiers = legal_identifiers|merge(['VAT not applicable, article 293 B of the French tax code'|trans({}, 'pdf', document_locale)]) %}{% endif %}
+{% if customer_vat_exempted|default(false) and customer_vat_number|default('') %}{% set legal_identifiers = legal_identifiers|merge(['Customer VAT: '|trans({}, 'pdf', document_locale) ~ customer_vat_number]) %}{% endif %}
+{% if reverse_charge|default('') %}{% set legal_identifiers = legal_identifiers|merge([reverse_charge]) %}{% endif %}
+{% if config('store_registration_exempt') == '1' %}{% set legal_identifiers = legal_identifiers|merge(['Exempt from registration with the trade and companies register (RCS) and the trade register (RM)'|trans({}, 'pdf', document_locale)]) %}{% endif %}
+{% if config('store_legal_mentions') %}{% set legal_identifiers = legal_identifiers|merge([config('store_legal_mentions')]) %}{% endif %}
+{# A shop that never filled the dedicated keys keeps printing its legacy free-text identifier. #}
+{% if legal_identifiers is empty and config('store_business_id') %}{% set legal_identifiers = [config('store_business_id')] %}{% endif %}
+{% if layout|default('list') == 'line' %}
+{% if legal_identifiers is not empty %} - {{ legal_identifiers|join(' - ') }}{% endif %}
+{% else %}
+{% for identifier in legal_identifiers %}<p>{{ identifier }}</p>{% endfor %}
+{% endif %}
