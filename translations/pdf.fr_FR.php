@@ -91,4 +91,5 @@ return [
     'Order date' => 'Date de commande',
     'Location' => 'Emplacement',
     'Nothing to pick: this order only holds virtual products.' => 'Rien à préparer : cette commande ne contient que des produits virtuels.',
+    'Paid by %module%' => 'Réglé par %module%',
 ];

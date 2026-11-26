@@ -89,4 +89,5 @@ return [
     'Order date' => 'Order date',
     'Location' => 'Location',
     'Nothing to pick: this order only holds virtual products.' => 'Nothing to pick: this order only holds virtual products.',
+    'Paid by %module%' => 'Paid by %module%',
 ];

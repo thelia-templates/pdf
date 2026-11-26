@@ -6,6 +6,15 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and
 
 ## [Unreleased]
 
+Needs Thelia core 3.5, which lists the payment parts of an order (`order_payment_part` loop).
+
+### Changed
+- The invoice prints every instant means that paid part of the order, read from the payment parts of the core: a credit note keeps its line with its number, and any other means (the customer credit of CreditAccount, a gift card) gets a line "Paid by" with its module and amount. The line "Balance paid by" gives the amount of the primary part, so it is right when an order is paid by a credit note and another means together. The total does not change, and an order paid with one payment module prints the invoice it always printed.
+- The package requires `thelia/core` `^3.5`.
+
+### Added
+- The label "Paid by %module%" in German, English, Spanish, French, Italian and Dutch.
+
 ## [1.5.0] 2026-11-19
 
 The invoice and the delivery note show the components of a product bundle. Needs Thelia core 3.4, which stores bundles (`LINE_TYPE` and `PARENT` on the `order_product` loop).

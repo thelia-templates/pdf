@@ -412,23 +412,29 @@
                 </tr>
                 {% endif %}
 
-                {# The credit notes that paid part of the order (CreditNote module, `order-credit-note` loop), then what they left to the payment module. A settlement, not a discount: the total above does not change. The loop is only called when the module is installed and active, so a shop without it prints the invoice it always printed and logs no unknown loop. #}
-                {% set creditNoteUses = loopCount('module', {code: 'CreditNote', active: 1}) > 0 ? loop('order-credit-notes', 'order-credit-note', {order: order_id}) : [] %}
-                {% if creditNoteUses|length %}
-                {% for creditNoteUse in creditNoteUses %}
+                {# The parts that paid the order (core `order_payment_part` loop): every instant means (a credit note, the customer credit, a gift card), then the balance its provider charged. Settlements, not discounts: the total above does not change. An order paid with one payment module has no part and prints the invoice it always printed. A credit note keeps its number, read from the CreditNote module while it is active. #}
+                {% set paymentParts = loop('invoice-payment-parts', 'order_payment_part', {order: order_id}) %}
+                {% set creditNoteActive = paymentParts|length > 0 and loopCount('module', {code: 'CreditNote', active: 1}) > 0 %}
+                {% set firstCreditNotePart = paymentParts|filter(part => part.PAYMENT_MODULE_CODE == 'CreditNote')|first %}
+                {% for part in paymentParts %}
+                {% if part.PAYMENT_MODULE_CODE == 'CreditNote' and creditNoteActive %}
+                {% if part.ID == firstCreditNotePart.ID %}
+                {% for creditNoteUse in loop('order-credit-notes', 'order-credit-note', {order: order_id}) %}
                 <tr>
                     <td class="table-3-1"><p>{{ 'Paid by credit note %ref%'|trans({'%ref%': creditNoteUse.REF}, 'pdf', document_locale) }}</p></td>
                     <td class="table-3-1 align-right"><p>{{ format_money(creditNoteUse.AMOUNT, currency) }}</p></td>
                 </tr>
                 {% endfor %}
-                {% set leftByCreditNotes = order.TOTAL_TAXED_AMOUNT - creditNoteUses|reduce((paid, creditNoteUse) => paid + creditNoteUse.AMOUNT, 0) %}
-                {% if leftByCreditNotes >= 0.005 %}
+                {% endif %}
+                {% elseif not part.IS_PRIMARY or paymentParts|length > 1 %}
+                {% set partModules = part.PAYMENT_MODULE_ID ? loop('payment-part-module', 'module', {id: part.PAYMENT_MODULE_ID}) : [] %}
+                {% set partModuleTitle = partModules|length ? (partModules|first).TITLE : part.PAYMENT_MODULE_DELETED_TITLE %}
                 <tr>
-                    <td class="table-3-1"><p>{% for module in loop('balance-payment-module', 'module', {id: order.PAYMENT_MODULE}) %}{{ 'Balance paid by %module%'|trans({'%module%': module.TITLE}, 'pdf', document_locale) }}{% endfor %}</p></td>
-                    <td class="table-3-1 align-right"><p>{{ format_money(leftByCreditNotes, currency) }}</p></td>
+                    <td class="table-3-1"><p>{{ (part.IS_PRIMARY ? 'Balance paid by %module%' : 'Paid by %module%')|trans({'%module%': partModuleTitle}, 'pdf', document_locale) }}</p></td>
+                    <td class="table-3-1 align-right"><p>{{ format_money(part.AMOUNT, currency) }}</p></td>
                 </tr>
                 {% endif %}
-                {% endif %}
+                {% endfor %}
             </table>
         </td>
     </tr>
