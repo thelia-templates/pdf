@@ -79,4 +79,5 @@ return [
     'Group discount %rate% % already included' => 'Descuento de grupo del %rate% % ya incluido',
     'Paid by credit note %ref%' => 'Pagado con el abono %ref%',
     'Balance paid by %module%' => 'Saldo pagado con %module%',
+    'Paid by %module%' => 'Pagado con %module%',
 ];

@@ -71,4 +71,5 @@ return [
     'Group discount %rate% % already included' => 'Groepskorting %rate% % reeds inbegrepen',
     'Paid by credit note %ref%' => 'Betaald met creditnota %ref%',
     'Balance paid by %module%' => 'Saldo betaald met %module%',
+    'Paid by %module%' => 'Betaald met %module%',
 ];
