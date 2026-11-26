@@ -21,6 +21,7 @@ return [
     'Invoice REF' => 'Счет-фактура номер',
     'Invoice address' => 'Адрес плательщика',
     'Invoice date' => 'Дата счет-фактуры',
+    'Notes:' => 'Примечания:',
     'Payment module' => 'Модуль оплаты',
     'Phone: ' => 'Телефон: ',
     'Postage' => 'Почтовые расходы',

@@ -25,6 +25,7 @@ return [
     'Invoice REF' => 'Rechnungs REF',
     'Invoice address' => 'Rechungsadresse',
     'Invoice date' => 'Rechnungsdatum',
+    'Notes:' => 'Anmerkungen:',
     'Payment module' => 'Zahlungsmodul',
     'Phone: ' => 'Telefonnummer: ',
     'Postage' => 'Porto',

@@ -36,6 +36,7 @@ return [
     'Invoice address' => 'Factuuradres',
     'Invoice date' => 'Factuurdatum',
     'Order REF' => 'Bestelnummer',
+    'Notes:' => 'Opmerkingen:',
     'Payment module' => 'Betaalmethode',
     'Phone: ' => 'Tel.: ',
     'Postage tax amount' => 'Btw-bedrag verzendkosten',

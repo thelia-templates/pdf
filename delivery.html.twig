@@ -322,6 +322,22 @@
         </tr>
     </table>
 
+    {# The notes the shop wrote for the customer (order history notes marked visible to the customer). Needs the `order_customer_notes` Twig function of Thelia core 3.5. #}
+    {% set customer_notes = order_customer_notes(order.ID) %}
+    {% if customer_notes %}
+    <table style="padding-top: 5mm;">
+        <col style="width: 100%; padding: 3mm;" />
+        <tr>
+            <td class="table-3-module" style="border-left:solid 3px #f6993c; padding-top: 2mm">
+                <h3>{{ 'Notes:'|trans({}, 'pdf', document_locale) }}</h3>
+                {% for note in customer_notes %}
+                <p>{{ note.comment|nl2br }}</p>
+                {% endfor %}
+            </td>
+        </tr>
+    </table>
+    {% endif %}
+
 {{ hook('delivery.after-summary', {order: order_id}) }}
 
 {% endfor %}
