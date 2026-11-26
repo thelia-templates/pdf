@@ -323,6 +323,15 @@
 
             {{ hook('invoice.after-delivery-module', {order: order_id, module_id: order.DELIVERY_MODULE}) }}
 
+            {# The notes the shop wrote for the customer (order history notes marked visible to the customer). Needs the `order_customer_notes` Twig function of Thelia core 3.5. #}
+            {% set customer_notes = order_customer_notes(order.ID) %}
+            {% if customer_notes %}
+            <h3>{{ 'Notes:'|trans({}, 'pdf', document_locale) }}</h3>
+            {% for note in customer_notes %}
+            <p>{{ note.comment|nl2br }}</p>
+            {% endfor %}
+            {% endif %}
+
         </td>
         <td>
             <table class="table-3">

@@ -20,6 +20,7 @@ return [
     'EORI: ' => 'EORI: ',
     'Exempt from registration with the trade and companies register (RCS) and the trade register (RM)' => 'Exempt from registration with the trade and companies register (RCS) and the trade register (RM)',
     'Invoice date' => 'Számla kelte',
+    'Notes:' => 'Megjegyzések:',
     'Payment module' => 'Fizetési modul',
     'Postage' => 'Szállítási költség',
     'Product' => 'Termék',

@@ -31,6 +31,7 @@ return [
     'Order REF' => 'Order REF',
     'Invoice address' => 'Invoice address',
     'Invoice date' => 'Invoice date',
+    'Notes:' => 'Notes:',
     'Payment module' => 'Payment module',
     'Phone: ' => 'Phone: ',
     'Postage' => 'Postage',

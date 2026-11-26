@@ -6,6 +6,12 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and
 
 ## [Unreleased]
 
+The invoice and the delivery note print the notes the shop wrote for the customer. Needs Thelia core 3.5.0, whose Twig function `order_customer_notes` reads them: with an older core the two documents fail to render.
+
+### Added
+- The invoice prints the notes of the order that an administrator marked visible to the customer, under the delivery module, and the delivery note prints them in a block of their own after the delivery module. Nothing is printed for an order without such a note; an internal note is never printed. The text keeps its line breaks and is escaped.
+- The label "Notes:" in English, French, German, Spanish, Italian, Dutch, Hungarian, Russian, Turkish and Persian (`translations/` and, where the language has one, `I18n/`); the other languages fall back to English.
+
 ## [1.5.0] 2026-11-19
 
 The invoice and the delivery note show the components of a product bundle. Needs Thelia core 3.4, which stores bundles (`LINE_TYPE` and `PARENT` on the `order_product` loop).
