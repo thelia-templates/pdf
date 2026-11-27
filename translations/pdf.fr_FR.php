@@ -92,4 +92,13 @@ return [
     'Order date' => 'Date de commande',
     'Location' => 'Emplacement',
     'Nothing to pick: this order only holds virtual products.' => 'Rien à préparer : cette commande ne contient que des produits virtuels.',
+    'QUOTE' => 'DEVIS',
+    'Quote REF' => 'Référence du devis',
+    'Revision' => 'Révision',
+    'Quote date' => 'Date du devis',
+    'Valid until' => 'Valable jusqu\'au',
+    'Catalogue price' => 'Prix catalogue',
+    'Negotiated price' => 'Prix négocié',
+    'Message from the shop' => 'Message de la boutique',
+    'Total of the lines without tax' => 'Total des lignes HT',
 ];

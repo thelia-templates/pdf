@@ -91,22 +91,12 @@
     {% endfor %}
 {% endfor %}
 
-{# Legal identifiers printed both in the page footer and in the imprint below. Each one shows
-   up only when it applies: all of them describe the shop, except the reverse charge, which
-   directive 2006/112/EC requires on the invoice of a buyer who owes the VAT himself. #}
-{% set legal_identifiers = [] %}
-{% if config('store_siret') %}{% set legal_identifiers = legal_identifiers|merge(['SIRET: '|trans({}, 'pdf', document_locale) ~ config('store_siret')]) %}{% endif %}
-{% if config('store_ape_code') %}{% set legal_identifiers = legal_identifiers|merge(['APE code: '|trans({}, 'pdf', document_locale) ~ config('store_ape_code')]) %}{% endif %}
-{% if config('store_vat_intracom') %}{% set legal_identifiers = legal_identifiers|merge(['VAT: '|trans({}, 'pdf', document_locale) ~ config('store_vat_intracom')]) %}{% endif %}
-{% if config('store_eori') %}{% set legal_identifiers = legal_identifiers|merge(['EORI: '|trans({}, 'pdf', document_locale) ~ config('store_eori')]) %}{% endif %}
-{% if config('store_vat_exempt') == '1' %}{% set legal_identifiers = legal_identifiers|merge(['VAT not applicable, article 293 B of the French tax code'|trans({}, 'pdf', document_locale)]) %}{% endif %}
-{% if vat_exempted and vat_exempted_number %}{% set legal_identifiers = legal_identifiers|merge(['Customer VAT: '|trans({}, 'pdf', document_locale) ~ vat_exempted_number]) %}{% endif %}
-{% if vat_exempted %}{% set legal_identifiers = legal_identifiers|merge(['Reverse charge: VAT due by the customer'|trans({}, 'pdf', document_locale)]) %}{% endif %}
-{% if config('store_registration_exempt') == '1' %}{% set legal_identifiers = legal_identifiers|merge(['Exempt from registration with the trade and companies register (RCS) and the trade register (RM)'|trans({}, 'pdf', document_locale)]) %}{% endif %}
-{% if config('store_legal_mentions') %}{% set legal_identifiers = legal_identifiers|merge([config('store_legal_mentions')]) %}{% endif %}
-{# A shop that never filled the dedicated keys keeps printing its legacy free-text identifier. #}
-{% if legal_identifiers is empty and config('store_business_id') %}{% set legal_identifiers = [config('store_business_id')] %}{% endif %}
-
+{# The legal identifiers are assembled by an include shared with the other documents of the
+   shop: the page footer prints them on one line, the imprint below as a list. All of them
+   describe the shop, except the reverse charge, which directive 2006/112/EC requires on the
+   invoice of a buyer who owes the VAT himself, hence the values read from the order. The
+   mention is worded here, on the invoice that owes it, and handed to the include. #}
+{% set reverse_charge = vat_exempted ? 'Reverse charge: VAT due by the customer'|trans({}, 'pdf', document_locale) : '' %}
 <div class="pdf-footer">
     {{ hook('invoice.footer-top', {order: order_id}) }}
     <table>
@@ -120,7 +110,7 @@
                 {% set city = config('store_zipcode') ~ ' ' ~ config('store_city') %}
                 {{ config('store_name') }}
                 {% if city|trim %} - {{ city }}{% endif %}
-                {% if legal_identifiers is not empty %} - {{ legal_identifiers|join(' - ') }}{% endif %}
+                {% include 'legal_identifiers.html.twig' with {layout: 'line', document_locale: document_locale, customer_vat_exempted: vat_exempted, customer_vat_number: vat_exempted_number, reverse_charge: reverse_charge} only %}
             </td>
             <td class="align-right">{{ 'page'|trans({}, 'pdf', document_locale) }} <span class="page-counter"></span></td>
         </tr>
@@ -184,7 +174,7 @@
                 {% if config('store_country') %}
                     {% for country in loop('address.country.title', 'country', {visible: '*', id: config('store_country')}) %}<p>{{ country.TITLE }}</p>{% endfor %}
                 {% endif %}
-                {% for identifier in legal_identifiers %}<p>{{ identifier }}</p>{% endfor %}
+                {% include 'legal_identifiers.html.twig' with {layout: 'list', document_locale: document_locale, customer_vat_exempted: vat_exempted, customer_vat_number: vat_exempted_number, reverse_charge: reverse_charge} only %}
                 {% if config('store_phone') %}<p>{{ 'Phone: '|trans({}, 'pdf', document_locale) }}{{ config('store_phone') }}</p>{% endif %}
                 {% if config('store_email') %}<p>{{ 'Email: '|trans({}, 'pdf', document_locale) }}{{ config('store_email') }}</p>{% endif %}
             {% endif %}

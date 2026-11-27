@@ -11,6 +11,11 @@ The invoice and the delivery note print the notes the shop wrote for the custome
 ### Added
 - The invoice prints the notes of the order that an administrator marked visible to the customer, under the delivery module, and the delivery note prints them in a block of their own after the delivery module. Nothing is printed for an order without such a note; an internal note is never printed. The text keeps its line breaks and is escaped.
 - The label "Notes:" in English, French, German, Spanish, Italian, Dutch, Hungarian, Russian, Turkish and Persian (`translations/` and, where the language has one, `I18n/`); the other languages fall back to English.
+- `quote.html.twig`, the document of a negotiated quote, laid out like the invoice: the lines with their catalogue and negotiated prices, the discount, the postage, the totals, the message of the shop, the validity date, the addresses copied when the quote was sent and the reverse charge mention when the buyer owes the VAT. Thelia core renders it from 3.5 on; an older core never asks for it.
+- Its labels in English, French and German.
+
+### Changed
+- The legal identifiers of the shop moved from `invoice.html.twig` to the include `legal_identifiers.html.twig`, shared by the invoice and the quote. The invoice prints the same text.
 
 ## [1.5.0] 2026-11-19
 

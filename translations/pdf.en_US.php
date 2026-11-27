@@ -90,4 +90,13 @@ return [
     'Order date' => 'Order date',
     'Location' => 'Location',
     'Nothing to pick: this order only holds virtual products.' => 'Nothing to pick: this order only holds virtual products.',
+    'QUOTE' => 'QUOTE',
+    'Quote REF' => 'Quote REF',
+    'Revision' => 'Revision',
+    'Quote date' => 'Quote date',
+    'Valid until' => 'Valid until',
+    'Catalogue price' => 'Catalogue price',
+    'Negotiated price' => 'Negotiated price',
+    'Message from the shop' => 'Message from the shop',
+    'Total of the lines without tax' => 'Total of the lines without tax',
 ];
